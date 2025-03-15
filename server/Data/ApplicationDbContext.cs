@@ -25,9 +25,8 @@ public class ApplicationDbContext : DbContext
             .HasIndex(p => p.Name)
             .IsUnique();
 
-        modelBuilder.Entity<Salesperson>()
-            .HasIndex(s => new { s.FirstName, s.LastName })
-            .IsUnique();
+        // Remove unique constraints on phone and address since family members
+        // might share the same contact information
 
         // Seed data
         SeedData(modelBuilder);

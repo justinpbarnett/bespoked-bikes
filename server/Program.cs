@@ -112,11 +112,14 @@ app.MapGet("/api/salespersons/{id}", async (int id, ApplicationDbContext db) =>
 
 app.MapPost("/api/salespersons", async ([FromBody] Salesperson salesperson, ApplicationDbContext db) =>
 {
-    // Check for duplicates
-    if (await db.Salespersons.AnyAsync(s =>
-        s.FirstName == salesperson.FirstName && s.LastName == salesperson.LastName))
+    // Check for duplicate name (case-insensitive) with same address
+    // This prevents creating duplicates of the same person with minor naming differences
+    if (await db.Salespersons.AnyAsync(s => 
+        s.FirstName.ToLower() == salesperson.FirstName.ToLower() && 
+        s.LastName.ToLower() == salesperson.LastName.ToLower() && 
+        s.Address == salesperson.Address))
     {
-        return Results.BadRequest($"A salesperson with the name '{salesperson.FirstName} {salesperson.LastName}' already exists.");
+        return Results.BadRequest($"A salesperson named '{salesperson.FirstName} {salesperson.LastName}' already exists at this address.");
     }
 
     db.Salespersons.Add(salesperson);
@@ -132,13 +135,20 @@ app.MapPut("/api/salespersons/{id}", async (int id, [FromBody] Salesperson sales
         return Results.NotFound();
     }
 
-    // Check for duplicates if name has changed
-    if ((salesperson.FirstName != existingSalesperson.FirstName ||
-         salesperson.LastName != existingSalesperson.LastName) &&
-        await db.Salespersons.AnyAsync(s =>
-            s.FirstName == salesperson.FirstName && s.LastName == salesperson.LastName))
+    // Check for duplicate name (case-insensitive) with same address
+    // Only perform this check if name or address has changed
+    bool nameChanged = salesperson.FirstName.ToLower() != existingSalesperson.FirstName.ToLower() || 
+                        salesperson.LastName.ToLower() != existingSalesperson.LastName.ToLower();
+    bool addressChanged = salesperson.Address != existingSalesperson.Address;
+    
+    if ((nameChanged || addressChanged) &&
+        await db.Salespersons.AnyAsync(s => 
+            s.Id != id &&
+            s.FirstName.ToLower() == salesperson.FirstName.ToLower() && 
+            s.LastName.ToLower() == salesperson.LastName.ToLower() && 
+            s.Address == salesperson.Address))
     {
-        return Results.BadRequest($"A salesperson with the name '{salesperson.FirstName} {salesperson.LastName}' already exists.");
+        return Results.BadRequest($"A salesperson named '{salesperson.FirstName} {salesperson.LastName}' already exists at this address.");
     }
 
     existingSalesperson.FirstName = salesperson.FirstName;
