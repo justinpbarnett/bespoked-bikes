@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCommissionReport } from "../../services/api";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
+import { getCommissionReport } from "../services/api";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
 import {
   Table,
   TableBody,
@@ -10,30 +10,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../components/ui/table";
 import { format } from "date-fns";
 import { Download, FileSpreadsheet, Search } from "lucide-react";
 
 export default function Reports() {
   const currentYear = new Date().getFullYear();
-  const currentQuarter = Math.floor((new Date().getMonth() / 3)) + 1;
+  const currentQuarter = Math.floor(new Date().getMonth() / 3) + 1;
 
   const [filter, setFilter] = useState({
     year: currentYear,
     quarter: currentQuarter,
   });
 
-  const { data: report, isLoading, error, refetch } = useQuery({
+  const {
+    data: report,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["commissionReport", filter.year, filter.quarter],
     queryFn: () => getCommissionReport(filter.year, filter.quarter),
   });
 
   const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilter(prev => ({ ...prev, year: parseInt(e.target.value, 10) }));
+    setFilter((prev) => ({ ...prev, year: parseInt(e.target.value, 10) }));
   };
 
   const handleQuarterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilter(prev => ({ ...prev, quarter: parseInt(e.target.value, 10) }));
+    setFilter((prev) => ({ ...prev, quarter: parseInt(e.target.value, 10) }));
   };
 
   const formatDate = (dateString: string) => {
@@ -49,32 +54,39 @@ export default function Reports() {
       "Last Name",
       "Total Sales",
       "Total Revenue",
-      "Total Commission"
+      "Total Commission",
     ];
 
-    const dataRows = report.commissions.map(commission => [
+    const dataRows = report.commissions.map((commission) => [
       commission.salespersonId,
       commission.firstName,
       commission.lastName,
       commission.totalSales,
       `$${commission.totalRevenue.toFixed(2)}`,
-      `$${commission.totalCommission.toFixed(2)}`
+      `$${commission.totalCommission.toFixed(2)}`,
     ]);
 
-    const title = `Q${report.quarter} ${report.year} Commission Report (${formatDate(report.startDate)} - ${formatDate(report.endDate)})`;
-    
+    const title = `Q${report.quarter} ${
+      report.year
+    } Commission Report (${formatDate(report.startDate)} - ${formatDate(
+      report.endDate
+    )})`;
+
     const csvContent = [
       title,
       "",
       headerRow.join(","),
-      ...dataRows.map(row => row.join(","))
+      ...dataRows.map((row) => row.join(",")),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `commission_report_q${report.quarter}_${report.year}.csv`);
+    link.setAttribute(
+      "download",
+      `commission_report_q${report.quarter}_${report.year}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -108,9 +120,9 @@ export default function Reports() {
               id="year"
               value={filter.year}
               onChange={handleYearChange}
-              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-[hsl(var(--background))]"
             >
-              {years.map(year => (
+              {years.map((year) => (
                 <option key={year} value={year}>
                   {year}
                 </option>
@@ -123,7 +135,7 @@ export default function Reports() {
               id="quarter"
               value={filter.quarter}
               onChange={handleQuarterChange}
-              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-[hsl(var(--background))]"
             >
               <option value={1}>Q1 (Jan-Mar)</option>
               <option value={2}>Q2 (Apr-Jun)</option>
@@ -137,7 +149,11 @@ export default function Reports() {
               Generate Report
             </Button>
             {report && report.commissions.length > 0 && (
-              <Button variant="outline" onClick={exportToCSV} className="mb-0.5">
+              <Button
+                variant="outline"
+                onClick={exportToCSV}
+                className="mb-0.5"
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Export CSV
               </Button>
@@ -167,14 +183,18 @@ export default function Reports() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {report.commissions.map(commission => (
+                  {report.commissions.map((commission) => (
                     <TableRow key={commission.salespersonId}>
                       <TableCell className="font-medium">
                         {commission.firstName} {commission.lastName}
                       </TableCell>
                       <TableCell>{commission.totalSales}</TableCell>
-                      <TableCell>${commission.totalRevenue.toFixed(2)}</TableCell>
-                      <TableCell>${commission.totalCommission.toFixed(2)}</TableCell>
+                      <TableCell>
+                        ${commission.totalRevenue.toFixed(2)}
+                      </TableCell>
+                      <TableCell>
+                        ${commission.totalCommission.toFixed(2)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -182,7 +202,9 @@ export default function Reports() {
             ) : (
               <div className="bg-gray-50 p-8 text-center rounded-md">
                 <FileSpreadsheet className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                <h3 className="text-lg font-medium text-gray-900">No commission data found</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  No commission data found
+                </h3>
                 <p className="text-gray-500 mt-1">
                   There are no sales recorded for this quarter.
                 </p>

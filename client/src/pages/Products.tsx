@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "../../services/api";
-import { Product } from "../../types";
-import { Button } from "../ui/button";
-import ProductForm from "./ProductForm";
+import { getProducts } from "../services/api";
+import { Product } from "../types";
+import { Button } from "../components/ui/button";
+import ProductForm from "../forms/ProductForm";
 import {
   Table,
   TableBody,
@@ -11,14 +11,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../components/ui/table";
 import { Edit, Plus } from "lucide-react";
 
 export default function Products() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const { data: products, isLoading, error } = useQuery({
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
   });
@@ -57,10 +61,7 @@ export default function Products() {
       </div>
 
       {isFormOpen && (
-        <ProductForm
-          product={editingProduct}
-          onClose={handleCloseForm}
-        />
+        <ProductForm product={editingProduct} onClose={handleCloseForm} />
       )}
 
       <div className="bg-white rounded-lg shadow">
@@ -88,7 +89,11 @@ export default function Products() {
                 <TableCell>{product.quantityOnHand}</TableCell>
                 <TableCell>{product.commissionPercentage}%</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(product)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(product)}
+                  >
                     <Edit className="w-4 h-4" />
                   </Button>
                 </TableCell>

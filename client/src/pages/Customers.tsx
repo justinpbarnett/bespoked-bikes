@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCustomers } from "../../services/api";
-import { Customer } from "../../types";
-import { Button } from "../ui/button";
-import CustomerForm from "./CustomerForm";
+import { getCustomers } from "../services/api";
+import { Customer } from "../types";
+import { Button } from "../components/ui/button";
+import CustomerForm from "../forms/CustomerForm";
 import {
   Table,
   TableBody,
@@ -11,14 +11,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../components/ui/table";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 
 export default function Customers() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const { data: customers, isLoading, error } = useQuery({
+  const {
+    data: customers,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["customers"],
     queryFn: getCustomers,
   });
@@ -53,9 +57,7 @@ export default function Customers() {
         </Button>
       </div>
 
-      {isFormOpen && (
-        <CustomerForm onClose={handleCloseForm} />
-      )}
+      {isFormOpen && <CustomerForm onClose={handleCloseForm} />}
 
       <div className="bg-white rounded-lg shadow">
         <Table>

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createProduct, updateProduct } from "../../services/api";
-import { Product, ProductCreate, ProductUpdate } from "../../types";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { X } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { createProduct, updateProduct } from "@/services/api";
+import { Product, ProductCreate, ProductUpdate } from "../types";
 
 type ProductFormProps = {
   product: Product | null;
@@ -51,11 +51,9 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
     },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? parseFloat(value) || 0 : value,
@@ -188,7 +186,9 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="commissionPercentage">Commission Percentage (%)</Label>
+            <Label htmlFor="commissionPercentage">
+              Commission Percentage (%)
+            </Label>
             <Input
               id="commissionPercentage"
               name="commissionPercentage"

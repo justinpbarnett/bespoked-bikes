@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createSalesperson, updateSalesperson } from "../../services/api";
-import { Salesperson, SalespersonSubmit } from "../../types";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { createSalesperson, updateSalesperson } from "../services/api";
+import { Salesperson, SalespersonSubmit } from "../types";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { X } from "lucide-react";
 import { format } from "date-fns";
 
@@ -13,7 +13,10 @@ type SalespersonFormProps = {
   onClose: () => void;
 };
 
-export default function SalespersonForm({ salesperson, onClose }: SalespersonFormProps) {
+export default function SalespersonForm({
+  salesperson,
+  onClose,
+}: SalespersonFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!salesperson;
 
@@ -22,7 +25,7 @@ export default function SalespersonForm({ salesperson, onClose }: SalespersonFor
     lastName: salesperson?.lastName || "",
     address: salesperson?.address || "",
     phone: salesperson?.phone || "",
-    startDate: salesperson?.startDate 
+    startDate: salesperson?.startDate
       ? format(new Date(salesperson.startDate), "yyyy-MM-dd")
       : format(new Date(), "yyyy-MM-dd"),
     terminationDate: salesperson?.terminationDate
@@ -56,11 +59,9 @@ export default function SalespersonForm({ salesperson, onClose }: SalespersonFor
     },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -86,14 +87,17 @@ export default function SalespersonForm({ salesperson, onClose }: SalespersonFor
     }
 
     // Validate dates
-    if (formData.terminationDate && new Date(formData.terminationDate) < new Date(formData.startDate)) {
+    if (
+      formData.terminationDate &&
+      new Date(formData.terminationDate) < new Date(formData.startDate)
+    ) {
       setError("Termination date cannot be before start date.");
       return;
     }
 
     // Create a copy of the form data and prepare for submission
     const submissionData = { ...formData };
-    
+
     // Convert empty termination date string to null for the API
     if (submissionData.terminationDate === "") {
       submissionData.terminationDate = null as any; // using 'any' to bypass TypeScript type checking
@@ -195,7 +199,9 @@ export default function SalespersonForm({ salesperson, onClose }: SalespersonFor
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="terminationDate">Termination Date (if applicable)</Label>
+            <Label htmlFor="terminationDate">
+              Termination Date (if applicable)
+            </Label>
             <Input
               id="terminationDate"
               name="terminationDate"

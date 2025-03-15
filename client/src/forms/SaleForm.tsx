@@ -5,11 +5,11 @@ import {
   getProducts,
   getSalespersons,
   getCustomers,
-} from "../../services/api";
-import { SaleCreate } from "../../types";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+} from "@/services/api";
+import { SaleCreate } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { format } from "date-fns";
 
@@ -134,7 +134,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
               name="productId"
               value={formData.productId}
               onChange={handleChange}
-              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-[hsl(var(--background))]"
               required
             >
               <option value="">Select a product</option>
@@ -154,7 +154,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
               name="salespersonId"
               value={formData.salespersonId}
               onChange={handleChange}
-              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-[hsl(var(--background))]"
               required
             >
               <option value="">Select a salesperson</option>
@@ -173,7 +173,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
               name="customerId"
               value={formData.customerId}
               onChange={handleChange}
-              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 rounded-md border border-input bg-[hsl(var(--background))]"
               required
             >
               <option value="">Select a customer</option>

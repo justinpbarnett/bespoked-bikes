@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createCustomer } from "../../services/api";
-import { CustomerCreate } from "../../types";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { createCustomer } from "../services/api";
+import { CustomerCreate } from "../types";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { X } from "lucide-react";
 import { format } from "date-fns";
 
@@ -36,11 +36,9 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
     },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -146,10 +144,7 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
           <Button variant="outline" type="button" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={createMutation.isPending}
-          >
+          <Button type="submit" disabled={createMutation.isPending}>
             {createMutation.isPending ? "Saving..." : "Add Customer"}
           </Button>
         </div>

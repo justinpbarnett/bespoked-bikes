@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getSalesFiltered } from "../../services/api";
-import { Sale } from "../../types";
-import { Button } from "../ui/button";
-import SaleForm from "./SaleForm";
+import { getSalesFiltered } from "../services/api";
+import { Sale } from "../types";
+import { Button } from "../components/ui/button";
+import SaleForm from "../forms/SaleForm";
 import {
   Table,
   TableBody,
@@ -11,9 +11,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+} from "../components/ui/table";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { Plus, Search } from "lucide-react";
 import { format } from "date-fns";
 
@@ -24,7 +24,12 @@ export default function Sales() {
     endDate: "",
   });
 
-  const { data: sales, isLoading, error, refetch } = useQuery({
+  const {
+    data: sales,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["sales", dateFilter.startDate, dateFilter.endDate],
     queryFn: () => getSalesFiltered(dateFilter.startDate, dateFilter.endDate),
   });
@@ -116,7 +121,9 @@ export default function Sales() {
           <TableBody>
             {sales?.map((sale) => (
               <TableRow key={sale.id}>
-                <TableCell className="font-medium">{sale.product.name}</TableCell>
+                <TableCell className="font-medium">
+                  {sale.product.name}
+                </TableCell>
                 <TableCell>{`${sale.customer.firstName} ${sale.customer.lastName}`}</TableCell>
                 <TableCell>{`${sale.salesperson.firstName} ${sale.salesperson.lastName}`}</TableCell>
                 <TableCell>{formatDate(sale.salesDate)}</TableCell>

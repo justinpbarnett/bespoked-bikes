@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getSalespersons } from "../../services/api";
-import { Salesperson } from "../../types";
-import { Button } from "../ui/button";
-import SalespersonForm from "./SalespersonForm";
+import { getSalespersons } from "../services/api";
+import { Salesperson } from "../types";
+import { Button } from "../components/ui/button";
+import SalespersonForm from "../forms/SalespersonForm";
 import {
   Table,
   TableBody,
@@ -11,15 +11,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../components/ui/table";
 import { Edit, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 export default function Salespersons() {
-  const [editingSalesperson, setEditingSalesperson] = useState<Salesperson | null>(null);
+  const [editingSalesperson, setEditingSalesperson] =
+    useState<Salesperson | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const { data: salespersons, isLoading, error } = useQuery({
+  const {
+    data: salespersons,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["salespersons"],
     queryFn: getSalespersons,
   });
@@ -94,7 +99,11 @@ export default function Salespersons() {
                 <TableCell>{formatDate(salesperson.terminationDate)}</TableCell>
                 <TableCell>{salesperson.manager || "N/A"}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(salesperson)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(salesperson)}
+                  >
                     <Edit className="w-4 h-4" />
                   </Button>
                 </TableCell>
