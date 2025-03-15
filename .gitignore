@@ -20,7 +20,7 @@
 *.sw?
 *.user
 .codeignore
-codecopy*
+codeclip*
 
 # .NET Core API
 /server/bin/
