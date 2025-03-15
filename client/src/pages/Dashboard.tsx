@@ -18,7 +18,7 @@ import {
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { SalesCommissionChart } from "@/components/SalesCommissionChart"
+import { SalesCommissionChart } from "../components/SalesCommissionChart"
 
 // Sample data for demonstration
 const salesData = [
@@ -270,7 +270,7 @@ export default function Dashboard() {
                 <CardDescription>Monthly sales performance for the current quarter.</CardDescription>
               </CardHeader>
               <CardContent>
-                <SalesCommissionChart data={monthlySalesData.slice(3)} title="" chartType="bar" />
+                <SalesCommissionChart data={monthlySalesData.slice(3)} title="" description="" chartType="bar" />
               </CardContent>
             </Card>
 

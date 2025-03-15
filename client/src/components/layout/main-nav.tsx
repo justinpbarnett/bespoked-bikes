@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function MainNav() {
   const location = useLocation();
@@ -83,6 +84,7 @@ export function MainNav() {
           </Link>
         </nav>
         <div className="ml-auto flex items-center space-x-4">
+          <ModeToggle />
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             <span>John Doe (Manager)</span>
