@@ -1,83 +1,33 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
 trigger:
   - master
 
 pool:
-  name: Default
+  vmImage: ubuntu-latest
 
 variables:
-  - name: api_app_name
-    value: "bespoked-bikes-service"
-  - name: API_URL
-    value: "https://$(api_app_name).azurewebsites.net/api"
-  - name: RESOURCE_GROUP
-    value: "Profisee"
+  - name: VITE_API_URL
+    value: "https://bespoked-bikes-service.azurewebsites.net/api"
 
-jobs:
-  - job: BuildAndDeployAPI
-    strategy:
-      matrix:
-        api:
-          name: api
-          project: server/server.csproj
-    steps:
-      - task: DotNetCoreCLI@2
-        inputs:
-          command: "build"
-          projects: $(project)
-      - task: DotNetCoreCLI@2
-        inputs:
-          command: "publish"
-          publishWebProjects: true
-          arguments: "--configuration Release --output $(Build.ArtifactStagingDirectory)"
-      - task: AzureWebApp@1
-        inputs:
-          azureSubscription: "Profisee Service Connection"
-          appName: "$(api_app_name)"
-          package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
-      - task: AzurePowerShell@5
-        inputs:
-          azureSubscription: "Profisee Service Connection"
-          ScriptType: "InlineScript"
-          Inline: |
-            $appSettings = @{
-              WEBSITE_RUN_FROM_PACKAGE = "1"
-              PORT = "80"
-              ASPNETCORE_ENVIRONMENT = "Production"
-              DB_CONNECTION_STRING = "$(DB_CONNECTION_STRING)"
-              JWT_SECRET = "$(JWT_SECRET)"
-              CORS_ORIGINS = "https://bespoked-bikes.azurestaticapps.net"
-              LOG_LEVEL = "Information"
-            }
-            Set-AzWebApp -ResourceGroupName "$(RESOURCE_GROUP)" -Name "$(api_app_name)" -AppSettings $appSettings
-          azurePowerShellVersion: "LatestVersion"
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "18.x"
+    displayName: "Install Node.js"
 
-  - job: BuildAndDeployWeb
-    dependsOn: BuildAndDeployAPI
-    strategy:
-      matrix:
-        web:
-          name: web
-          workingDir: client
-    variables:
-      VITE_API_URL: $[variables.API_URL]
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "18.x"
-      - task: Npm@1
-        inputs:
-          command: "install"
-          workingDir: $(workingDir)
-      - task: Npm@1
-        inputs:
-          command: "custom"
-          workingDir: $(workingDir)
-          customCommand: "run build"
-        env:
-          VITE_API_URL: $(VITE_API_URL)
-          VITE_ENABLE_MOCK_DATA: "false"
-      - task: AzureStaticWebApp@0
-        inputs:
-          app_location: "$(workingDir)/dist"
-          azure_static_web_apps_api_token: $(DEPLOYMENT_TOKEN)
-          skip_app_build: true
+  - script: |
+      cd client
+      npm install
+      npm run build
+    displayName: "npm install and build"
+
+  - task: AzureStaticWebApp@0
+    inputs:
+      app_location: "client/dist"
+      azure_static_web_apps_api_token: $(DEPLOYMENT_TOKEN)
+      skip_app_build: true
+    displayName: "Deploy to Azure Static Web App"
