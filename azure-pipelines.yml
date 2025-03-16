@@ -26,7 +26,7 @@ jobs:
           arguments: "--configuration Release --output $(Build.ArtifactStagingDirectory)"
       - task: AzureWebApp@1
         inputs:
-          azureSubscription: "Azure subscription 1"
+          azureSubscription: "Profisee Service Connection"
           appName: "$(api_app_name)"
           package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
           appSettings: |
