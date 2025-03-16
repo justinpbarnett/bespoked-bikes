@@ -114,22 +114,37 @@ export default function Sales() {
               <TableHead>Customer</TableHead>
               <TableHead>Salesperson</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Original Price</TableHead>
+              <TableHead>Discount</TableHead>
               <TableHead>Sale Price</TableHead>
               <TableHead>Commission</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sales?.map((sale) => (
-              <TableRow key={sale.id}>
-                <TableCell className="font-medium">
-                  {sale.product.name}
-                </TableCell>
-                <TableCell>{`${sale.customer.firstName} ${sale.customer.lastName}`}</TableCell>
-                <TableCell>{`${sale.salesperson.firstName} ${sale.salesperson.lastName}`}</TableCell>
-                <TableCell>{formatDate(sale.salesDate)}</TableCell>
-                <TableCell>${sale.salePrice.toFixed(2)}</TableCell>
-                <TableCell>${sale.commissionAmount.toFixed(2)}</TableCell>
-              </TableRow>
+                <TableRow key={sale.id}>
+                  <TableCell className="font-medium">
+                    {sale.productName}
+                  </TableCell>
+                  <TableCell>{`${sale.customerFirstName} ${sale.customerLastName}`}</TableCell>
+                  <TableCell>{`${sale.salespersonFirstName} ${sale.salespersonLastName}`}</TableCell>
+                  <TableCell>{formatDate(sale.salesDate)}</TableCell>
+                  <TableCell>${sale.originalPrice?.toFixed(2) || sale.salePrice.toFixed(2)}</TableCell>
+                  <TableCell>
+                    {sale.appliedDiscountPercentage > 0 ? (
+                      <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs font-medium">
+                        {sale.appliedDiscountPercentage}%
+                        {sale.appliedDiscountCode && 
+                          <span className="ml-1 text-xs font-normal">({sale.appliedDiscountCode})</span>
+                        }
+                      </span>
+                    ) : (
+                      "None"
+                    )}
+                  </TableCell>
+                  <TableCell>${sale.salePrice.toFixed(2)}</TableCell>
+                  <TableCell>${sale.commissionAmount.toFixed(2)}</TableCell>
+                </TableRow>
             ))}
             {sales?.length === 0 && (
               <TableRow>

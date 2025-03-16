@@ -19,7 +19,7 @@ import {
 
 // For development: keep it simple with the proxy
 // Let the proxy in vite.config.ts handle the routing to the backend
-const API_URL = '/api';
+const API_URL = "/api";
 
 // Create API client with simplified configuration
 const api = axios.create({
@@ -40,39 +40,66 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    console.error("API Request Error:", error);
+    return Promise.reject(error);
+  }
+);
+
 // Add response interceptor for error handling with detailed debugging
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     // Handle common errors (401, 403, 500, etc.)
     if (error.response) {
       // Session expired or unauthorized
       if (error.response.status === 401) {
         // Handle unauthorized (e.g., redirect to login)
-        console.error('Unauthorized access, please log in again');
+        console.error("Unauthorized access, please log in again");
         // window.location.href = '/login';
       }
-      
+
       // Log other errors
-      console.error('API Error:', error.response.status, error.response.data);
+      console.error("API Error:", error.response.status, error.response.data);
+
+      // More detailed debugging
+      console.error("Complete error response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        headers: error.response.headers,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          data: error.config?.data,
+        },
+      });
     } else if (error.request) {
       // Network error - add more detailed debugging info
-      console.error('Network error details:', {
+      console.error("Network error details:", {
         message: error.message,
         request: {
           url: error.config?.url,
           method: error.config?.method,
           baseURL: error.config?.baseURL,
           headers: error.config?.headers,
+          data: error.config?.data,
         },
         code: error.code,
-        stack: error.stack
+        stack: error.stack,
       });
     } else {
       // Something else happened in setting up the request
-      console.error('Error setting up request:', error.message);
+      console.error("Error setting up request:", error.message);
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -101,7 +128,7 @@ export const updateProduct = async (
 ): Promise<void> => {
   await api.put(`/products/${id}`, {
     ...product,
-    id: id  // Explicitly include id in the request body
+    id: id, // Explicitly include id in the request body
   });
 };
 
@@ -128,9 +155,9 @@ export const updateSalesperson = async (
   salesperson: SalespersonSubmit
 ): Promise<void> => {
   // Include the ID in the request body to match route parameter
-  await api.put(`/salespersons/${id}`, { 
+  await api.put(`/salespersons/${id}`, {
     ...salesperson,
-    id: id  // Explicitly include id in the request body
+    id: id, // Explicitly include id in the request body
   });
 };
 
@@ -192,11 +219,26 @@ export const getDiscounts = async (): Promise<Discount[]> => {
   return response.data;
 };
 
+export const getGlobalDiscounts = async (
+  date?: string
+): Promise<Discount[]> => {
+  const params = new URLSearchParams();
+  if (date) params.append("date", date);
+
+  const response = await api.get<Discount[]>("/discounts/global", { params });
+  return response.data;
+};
+
 export const createDiscount = async (
   discount: DiscountCreate
 ): Promise<Discount> => {
-  const response = await api.post<Discount>("/discounts", discount);
-  return response.data;
+  try {
+    const response = await api.post<Discount>("/discounts", discount);
+    return response.data;
+  } catch (error) {
+    console.error("API error in createDiscount:", error);
+    throw error;
+  }
 };
 
 // Dashboard

@@ -4,6 +4,7 @@ import Products from "./pages/Products";
 import Salespersons from "./pages/Salespersons";
 import Customers from "./pages/Customers";
 import Sales from "./pages/Sales";
+import Discounts from "./pages/Discounts";
 import Reports from "./pages/Reports";
 import Dashboard from "./pages/Dashboard";
 import { ThemeProvider } from "./components/theme-provider";
@@ -19,6 +20,7 @@ function App() {
           <Route path="salespersons" element={<Salespersons />} />
           <Route path="customers" element={<Customers />} />
           <Route path="sales" element={<Sales />} />
+          <Route path="discounts" element={<Discounts />} />
           <Route path="reports" element={<Reports />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

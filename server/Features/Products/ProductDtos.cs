@@ -1,4 +1,4 @@
-namespace server.Features.Products.DTOs;
+namespace server.Features.Products;
 
 public record ProductDto(
     int Id,

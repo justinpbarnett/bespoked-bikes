@@ -38,16 +38,30 @@ export interface Sale {
   salesDate: string;
   salePrice: number;
   commissionAmount: number;
-  product: {
+  originalPrice: number;
+  appliedDiscountId: number | null;
+  appliedDiscountPercentage: number;
+  appliedDiscountCode?: string;
+  productId: number;
+  productName: string;
+  salespersonId: number;
+  salespersonFirstName: string;
+  salespersonLastName: string;
+  customerId: number;
+  customerFirstName: string;
+  customerLastName: string;
+  
+  // Virtual properties for compatibility with existing UI
+  product?: {
     id: number;
     name: string;
   };
-  salesperson: {
+  salesperson?: {
     id: number;
     firstName: string;
     lastName: string;
   };
-  customer: {
+  customer?: {
     id: number;
     firstName: string;
     lastName: string;
@@ -59,10 +73,13 @@ export interface Discount {
   beginDate: string;
   endDate: string;
   discountPercentage: number;
-  product: {
+  product?: {
     id: number;
     name: string;
   };
+  isGlobal: boolean;
+  discountCode?: string;
+  requiresCode: boolean;
 }
 
 export interface CommissionReport {
@@ -123,11 +140,14 @@ export interface SaleCreate {
   salespersonId: number;
   customerId: number;
   salesDate: string;
+  discountCode?: string;
 }
 
 export interface DiscountCreate {
-  productId: number;
+  productId?: number;
   beginDate: string;
   endDate: string;
   discountPercentage: number;
+  isGlobal: boolean;
+  discountCode?: string;
 }

@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using server.Features.Products.Commands;
-using server.Features.Products.DTOs;
-using server.Features.Products.Queries;
 
 namespace server.Features.Products;
 

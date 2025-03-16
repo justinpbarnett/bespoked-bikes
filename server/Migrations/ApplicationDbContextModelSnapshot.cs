@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using server.Data;
+using server.Infrastructure.Data;
 
 #nullable disable
 
@@ -341,13 +341,16 @@ namespace server.Migrations
                     b.Property<DateTime>("BeginDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DiscountCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("DiscountPercentage")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -442,7 +445,7 @@ namespace server.Migrations
                             Id = 11,
                             BeginDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DiscountPercentage = 15.0m,
-                            EndDate = new DateTime(2025, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = 11
                         },
                         new
@@ -450,7 +453,7 @@ namespace server.Migrations
                             Id = 12,
                             BeginDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DiscountPercentage = 12.5m,
-                            EndDate = new DateTime(2025, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = 12
                         },
                         new
@@ -458,7 +461,7 @@ namespace server.Migrations
                             Id = 13,
                             BeginDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DiscountPercentage = 20.0m,
-                            EndDate = new DateTime(2025, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = 13
                         },
                         new
@@ -466,16 +469,160 @@ namespace server.Migrations
                             Id = 14,
                             BeginDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DiscountPercentage = 10.0m,
-                            EndDate = new DateTime(2025, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = 14
                         },
                         new
                         {
                             Id = 15,
-                            BeginDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BeginDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DiscountPercentage = 15.0m,
                             EndDate = new DateTime(2025, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = 15
+                        },
+                        new
+                        {
+                            Id = 16,
+                            BeginDate = new DateTime(2023, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 10.0m,
+                            EndDate = new DateTime(2023, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 17,
+                            BeginDate = new DateTime(2023, 12, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 12.0m,
+                            EndDate = new DateTime(2023, 12, 26, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 18,
+                            BeginDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 8.0m,
+                            EndDate = new DateTime(2024, 7, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 19,
+                            BeginDate = new DateTime(2025, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 7.5m,
+                            EndDate = new DateTime(2025, 2, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 20,
+                            BeginDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 5.0m,
+                            EndDate = new DateTime(2025, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 21,
+                            BeginDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountPercentage = 10.0m,
+                            EndDate = new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 22,
+                            BeginDate = new DateTime(2023, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "BIKE3DEAL",
+                            DiscountPercentage = 15.0m,
+                            EndDate = new DateTime(2023, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 3
+                        },
+                        new
+                        {
+                            Id = 23,
+                            BeginDate = new DateTime(2023, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "BIKE5FALL",
+                            DiscountPercentage = 18.0m,
+                            EndDate = new DateTime(2023, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 5
+                        },
+                        new
+                        {
+                            Id = 24,
+                            BeginDate = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "WINTER7",
+                            DiscountPercentage = 30.0m,
+                            EndDate = new DateTime(2024, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 7
+                        },
+                        new
+                        {
+                            Id = 25,
+                            BeginDate = new DateTime(2023, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "CYBERMONDAY",
+                            DiscountPercentage = 15.0m,
+                            EndDate = new DateTime(2023, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 26,
+                            BeginDate = new DateTime(2023, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "HOLIDAY2023",
+                            DiscountPercentage = 20.0m,
+                            EndDate = new DateTime(2023, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 27,
+                            BeginDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "PRO16DEAL",
+                            DiscountPercentage = 25.0m,
+                            EndDate = new DateTime(2025, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 16
+                        },
+                        new
+                        {
+                            Id = 28,
+                            BeginDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "ELITE18",
+                            DiscountPercentage = 22.0m,
+                            EndDate = new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 18
+                        },
+                        new
+                        {
+                            Id = 29,
+                            BeginDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "BIKE20SPRING",
+                            DiscountPercentage = 18.0m,
+                            EndDate = new DateTime(2025, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = 20
+                        },
+                        new
+                        {
+                            Id = 30,
+                            BeginDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "MARCH2025",
+                            DiscountPercentage = 10.0m,
+                            EndDate = new DateTime(2025, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 31,
+                            BeginDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "SPRING2025",
+                            DiscountPercentage = 15.0m,
+                            EndDate = new DateTime(2025, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 32,
+                            BeginDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "BIKESEASON",
+                            DiscountPercentage = 12.0m,
+                            EndDate = new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 33,
+                            BeginDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DiscountCode = "MAY2025SALE",
+                            DiscountPercentage = 20.0m,
+                            EndDate = new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -492,13 +639,11 @@ namespace server.Migrations
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("PurchasePrice")
                         .HasColumnType("decimal(18,2)");
@@ -511,8 +656,7 @@ namespace server.Migrations
 
                     b.Property<string>("Style")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -595,7 +739,7 @@ namespace server.Migrations
                             Manufacturer = "Cervélo",
                             Name = "Speed Demon Racing",
                             PurchasePrice = 2000m,
-                            QuantityOnHand = 3,
+                            QuantityOnHand = 0,
                             SalePrice = 3599.99m,
                             Style = "Road"
                         },
@@ -807,11 +951,23 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppliedDiscountCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("AppliedDiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AppliedDiscountPercentage")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("CommissionAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("OriginalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -827,6 +983,8 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppliedDiscountId");
+
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ProductId");
@@ -839,8 +997,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 157.50m,
                             CustomerId = 1,
+                            OriginalPrice = 1499.99m,
                             ProductId = 1,
                             SalePrice = 1499.99m,
                             SalesDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -849,8 +1009,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 2,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 264.00m,
                             CustomerId = 2,
+                            OriginalPrice = 2199.99m,
                             ProductId = 2,
                             SalePrice = 2199.99m,
                             SalesDate = new DateTime(2023, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -859,98 +1021,131 @@ namespace server.Migrations
                         new
                         {
                             Id = 3,
-                            CommissionAmount = 110.50m,
+                            AppliedDiscountId = 3,
+                            AppliedDiscountPercentage = 12.5m,
+                            CommissionAmount = 111.56m,
                             CustomerId = 3,
+                            OriginalPrice = 1499.99m,
                             ProductId = 3,
-                            SalePrice = 1299.99m,
-                            SalesDate = new DateTime(2023, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 1312.49m,
+                            SalesDate = new DateTime(2023, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 3
                         },
                         new
                         {
                             Id = 4,
-                            CommissionAmount = 126.00m,
+                            AppliedDiscountId = 4,
+                            AppliedDiscountPercentage = 8.0m,
+                            CommissionAmount = 132.48m,
                             CustomerId = 4,
+                            OriginalPrice = 1599.99m,
                             ProductId = 4,
-                            SalePrice = 1399.99m,
-                            SalesDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 1471.99m,
+                            SalesDate = new DateTime(2023, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 1
                         },
                         new
                         {
                             Id = 5,
+                            AppliedDiscountId = 5,
+                            AppliedDiscountPercentage = 20.0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 5,
+                            OriginalPrice = 2499.99m,
                             ProductId = 5,
                             SalePrice = 1999.99m,
-                            SalesDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalesDate = new DateTime(2023, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 2
                         },
                         new
                         {
                             Id = 6,
-                            CommissionAmount = 337.50m,
+                            AppliedDiscountId = 16,
+                            AppliedDiscountPercentage = 10.0m,
+                            CommissionAmount = 364.50m,
                             CustomerId = 6,
+                            OriginalPrice = 2999.99m,
                             ProductId = 6,
-                            SalePrice = 2499.99m,
-                            SalesDate = new DateTime(2023, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 2699.99m,
+                            SalesDate = new DateTime(2023, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 3
                         },
                         new
                         {
                             Id = 7,
-                            CommissionAmount = 540.00m,
+                            AppliedDiscountId = 17,
+                            AppliedDiscountPercentage = 12.0m,
+                            CommissionAmount = 475.20m,
                             CustomerId = 7,
+                            OriginalPrice = 3599.99m,
                             ProductId = 7,
-                            SalePrice = 3599.99m,
-                            SalesDate = new DateTime(2023, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 3168.00m,
+                            SalesDate = new DateTime(2023, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 4
                         },
                         new
                         {
                             Id = 8,
-                            CommissionAmount = 75.00m,
+                            AppliedDiscountCode = "BIKE3DEAL",
+                            AppliedDiscountId = 22,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 95.62m,
                             CustomerId = 8,
-                            ProductId = 8,
-                            SalePrice = 999.99m,
-                            SalesDate = new DateTime(2023, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 1499.99m,
+                            ProductId = 3,
+                            SalePrice = 1274.99m,
+                            SalesDate = new DateTime(2023, 8, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 5
                         },
                         new
                         {
                             Id = 9,
-                            CommissionAmount = 96.00m,
+                            AppliedDiscountCode = "BIKE5FALL",
+                            AppliedDiscountId = 23,
+                            AppliedDiscountPercentage = 18.0m,
+                            CommissionAmount = 164.00m,
                             CustomerId = 9,
-                            ProductId = 9,
-                            SalePrice = 1199.99m,
-                            SalesDate = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 2499.99m,
+                            ProductId = 5,
+                            SalePrice = 2049.99m,
+                            SalesDate = new DateTime(2023, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 6
                         },
                         new
                         {
                             Id = 10,
-                            CommissionAmount = 218.50m,
+                            AppliedDiscountCode = "CYBERMONDAY",
+                            AppliedDiscountId = 25,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 185.72m,
                             CustomerId = 10,
+                            OriginalPrice = 1899.99m,
                             ProductId = 10,
-                            SalePrice = 1899.99m,
-                            SalesDate = new DateTime(2023, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 1614.99m,
+                            SalesDate = new DateTime(2023, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 7
                         },
                         new
                         {
                             Id = 11,
-                            CommissionAmount = 160.00m,
+                            AppliedDiscountCode = "HOLIDAY2023",
+                            AppliedDiscountId = 26,
+                            AppliedDiscountPercentage = 20.0m,
+                            CommissionAmount = 128.00m,
                             CustomerId = 11,
+                            OriginalPrice = 1599.99m,
                             ProductId = 11,
-                            SalePrice = 1599.99m,
-                            SalesDate = new DateTime(2023, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 1280.00m,
+                            SalesDate = new DateTime(2023, 12, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 8
                         },
                         new
                         {
                             Id = 12,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 12,
+                            OriginalPrice = 2299.99m,
                             ProductId = 12,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2023, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -959,8 +1154,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 13,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 30.00m,
                             CustomerId = 13,
+                            OriginalPrice = 499.99m,
                             ProductId = 13,
                             SalePrice = 499.99m,
                             SalesDate = new DateTime(2023, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -969,8 +1166,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 14,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 312.00m,
                             CustomerId = 14,
+                            OriginalPrice = 2399.99m,
                             ProductId = 14,
                             SalePrice = 2399.99m,
                             SalesDate = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -979,8 +1178,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 15,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 15,
+                            OriginalPrice = 2299.99m,
                             ProductId = 15,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2023, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -989,8 +1190,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 16,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 420.00m,
                             CustomerId = 16,
+                            OriginalPrice = 2999.99m,
                             ProductId = 16,
                             SalePrice = 2999.99m,
                             SalesDate = new DateTime(2023, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -999,8 +1202,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 17,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 17,
+                            OriginalPrice = 1999.99m,
                             ProductId = 17,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2023, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1009,8 +1214,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 18,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 351.00m,
                             CustomerId = 18,
+                            OriginalPrice = 2599.99m,
                             ProductId = 18,
                             SalePrice = 2599.99m,
                             SalesDate = new DateTime(2023, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1019,8 +1226,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 19,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 56.00m,
                             CustomerId = 19,
+                            OriginalPrice = 799.99m,
                             ProductId = 19,
                             SalePrice = 799.99m,
                             SalesDate = new DateTime(2023, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1029,8 +1238,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 20,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 511.50m,
                             CustomerId = 20,
+                            OriginalPrice = 3299.99m,
                             ProductId = 20,
                             SalePrice = 3299.99m,
                             SalesDate = new DateTime(2023, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1039,8 +1250,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 21,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 624.00m,
                             CustomerId = 21,
+                            OriginalPrice = 3899.99m,
                             ProductId = 21,
                             SalePrice = 3899.99m,
                             SalesDate = new DateTime(2023, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1049,48 +1262,63 @@ namespace server.Migrations
                         new
                         {
                             Id = 22,
-                            CommissionAmount = 63.00m,
+                            AppliedDiscountId = 7,
+                            AppliedDiscountPercentage = 25.0m,
+                            CommissionAmount = 189.00m,
                             CustomerId = 22,
-                            ProductId = 22,
-                            SalePrice = 899.99m,
-                            SalesDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 3599.99m,
+                            ProductId = 7,
+                            SalePrice = 2699.99m,
+                            SalesDate = new DateTime(2024, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 4
                         },
                         new
                         {
                             Id = 23,
-                            CommissionAmount = 110.50m,
+                            AppliedDiscountCode = "WINTER7",
+                            AppliedDiscountId = 24,
+                            AppliedDiscountPercentage = 30.0m,
+                            CommissionAmount = 214.20m,
                             CustomerId = 23,
-                            ProductId = 23,
-                            SalePrice = 1299.99m,
-                            SalesDate = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 3599.99m,
+                            ProductId = 7,
+                            SalePrice = 2519.99m,
+                            SalesDate = new DateTime(2024, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 5
                         },
                         new
                         {
                             Id = 24,
-                            CommissionAmount = 392.00m,
+                            AppliedDiscountId = 8,
+                            AppliedDiscountPercentage = 10.0m,
+                            CommissionAmount = 352.80m,
                             CustomerId = 24,
-                            ProductId = 24,
-                            SalePrice = 2799.99m,
-                            SalesDate = new DateTime(2024, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 2799.99m,
+                            ProductId = 8,
+                            SalePrice = 2519.99m,
+                            SalesDate = new DateTime(2024, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 6
                         },
                         new
                         {
                             Id = 25,
-                            CommissionAmount = 209.00m,
+                            AppliedDiscountId = 9,
+                            AppliedDiscountPercentage = 12.0m,
+                            CommissionAmount = 183.92m,
                             CustomerId = 25,
-                            ProductId = 25,
-                            SalePrice = 1899.99m,
-                            SalesDate = new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 1899.99m,
+                            ProductId = 9,
+                            SalePrice = 1671.99m,
+                            SalesDate = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 7
                         },
                         new
                         {
                             Id = 26,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 157.50m,
                             CustomerId = 26,
+                            OriginalPrice = 1499.99m,
                             ProductId = 1,
                             SalePrice = 1499.99m,
                             SalesDate = new DateTime(2024, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1099,8 +1327,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 27,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 264.00m,
                             CustomerId = 27,
+                            OriginalPrice = 2199.99m,
                             ProductId = 2,
                             SalePrice = 2199.99m,
                             SalesDate = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1109,8 +1339,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 28,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 110.50m,
                             CustomerId = 28,
+                            OriginalPrice = 1299.99m,
                             ProductId = 3,
                             SalePrice = 1299.99m,
                             SalesDate = new DateTime(2024, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1119,8 +1351,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 29,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 126.00m,
                             CustomerId = 29,
+                            OriginalPrice = 1399.99m,
                             ProductId = 4,
                             SalePrice = 1399.99m,
                             SalesDate = new DateTime(2024, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1129,8 +1363,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 30,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 30,
+                            OriginalPrice = 1999.99m,
                             ProductId = 5,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2024, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1139,38 +1375,48 @@ namespace server.Migrations
                         new
                         {
                             Id = 31,
-                            CommissionAmount = 337.50m,
+                            AppliedDiscountId = 18,
+                            AppliedDiscountPercentage = 8.0m,
+                            CommissionAmount = 310.50m,
                             CustomerId = 1,
+                            OriginalPrice = 2499.99m,
                             ProductId = 6,
-                            SalePrice = 2499.99m,
-                            SalesDate = new DateTime(2024, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 2299.99m,
+                            SalesDate = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 13
                         },
                         new
                         {
                             Id = 32,
-                            CommissionAmount = 540.00m,
+                            AppliedDiscountId = 18,
+                            AppliedDiscountPercentage = 8.0m,
+                            CommissionAmount = 496.80m,
                             CustomerId = 2,
+                            OriginalPrice = 3599.99m,
                             ProductId = 7,
-                            SalePrice = 3599.99m,
-                            SalesDate = new DateTime(2024, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 3311.99m,
+                            SalesDate = new DateTime(2024, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 14
                         },
                         new
                         {
                             Id = 33,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 75.00m,
                             CustomerId = 3,
+                            OriginalPrice = 999.99m,
                             ProductId = 8,
                             SalePrice = 999.99m,
-                            SalesDate = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalesDate = new DateTime(2024, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 15
                         },
                         new
                         {
                             Id = 34,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 96.00m,
                             CustomerId = 4,
+                            OriginalPrice = 1199.99m,
                             ProductId = 9,
                             SalePrice = 1199.99m,
                             SalesDate = new DateTime(2024, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1179,8 +1425,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 35,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 218.50m,
                             CustomerId = 5,
+                            OriginalPrice = 1899.99m,
                             ProductId = 10,
                             SalePrice = 1899.99m,
                             SalesDate = new DateTime(2024, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1189,8 +1437,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 36,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 160.00m,
                             CustomerId = 6,
+                            OriginalPrice = 1599.99m,
                             ProductId = 11,
                             SalePrice = 1599.99m,
                             SalesDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1199,8 +1449,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 37,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 7,
+                            OriginalPrice = 2299.99m,
                             ProductId = 12,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2024, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1209,8 +1461,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 38,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 30.00m,
                             CustomerId = 8,
+                            OriginalPrice = 499.99m,
                             ProductId = 13,
                             SalePrice = 499.99m,
                             SalesDate = new DateTime(2024, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1219,8 +1473,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 39,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 312.00m,
                             CustomerId = 9,
+                            OriginalPrice = 2399.99m,
                             ProductId = 14,
                             SalePrice = 2399.99m,
                             SalesDate = new DateTime(2024, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1229,8 +1485,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 40,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 10,
+                            OriginalPrice = 2299.99m,
                             ProductId = 15,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2024, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1239,8 +1497,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 41,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 420.00m,
                             CustomerId = 11,
+                            OriginalPrice = 2999.99m,
                             ProductId = 16,
                             SalePrice = 2999.99m,
                             SalesDate = new DateTime(2024, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1249,8 +1509,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 42,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 12,
+                            OriginalPrice = 1999.99m,
                             ProductId = 17,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2024, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1259,8 +1521,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 43,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 351.00m,
                             CustomerId = 13,
+                            OriginalPrice = 2599.99m,
                             ProductId = 18,
                             SalePrice = 2599.99m,
                             SalesDate = new DateTime(2024, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1269,8 +1533,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 44,
+                            AppliedDiscountPercentage = 0.0m,
                             CommissionAmount = 56.00m,
                             CustomerId = 14,
+                            OriginalPrice = 799.99m,
                             ProductId = 19,
                             SalePrice = 799.99m,
                             SalesDate = new DateTime(2024, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1279,62 +1545,343 @@ namespace server.Migrations
                         new
                         {
                             Id = 45,
-                            CommissionAmount = 511.50m,
+                            AppliedDiscountId = 11,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 434.77m,
                             CustomerId = 15,
-                            ProductId = 20,
-                            SalePrice = 3299.99m,
-                            SalesDate = new DateTime(2025, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 3299.99m,
+                            ProductId = 11,
+                            SalePrice = 2804.99m,
+                            SalesDate = new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 12
                         },
                         new
                         {
                             Id = 46,
-                            CommissionAmount = 624.00m,
+                            AppliedDiscountId = 12,
+                            AppliedDiscountPercentage = 12.5m,
+                            CommissionAmount = 546.00m,
                             CustomerId = 16,
-                            ProductId = 21,
-                            SalePrice = 3899.99m,
-                            SalesDate = new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OriginalPrice = 3899.99m,
+                            ProductId = 12,
+                            SalePrice = 3412.49m,
+                            SalesDate = new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 13
                         },
                         new
                         {
                             Id = 47,
-                            CommissionAmount = 63.00m,
+                            AppliedDiscountId = 19,
+                            AppliedDiscountPercentage = 7.5m,
+                            CommissionAmount = 58.27m,
                             CustomerId = 17,
+                            OriginalPrice = 899.99m,
                             ProductId = 22,
-                            SalePrice = 899.99m,
-                            SalesDate = new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 832.49m,
+                            SalesDate = new DateTime(2025, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 14
                         },
                         new
                         {
                             Id = 48,
-                            CommissionAmount = 110.50m,
+                            AppliedDiscountId = 19,
+                            AppliedDiscountPercentage = 7.5m,
+                            CommissionAmount = 102.21m,
                             CustomerId = 18,
+                            OriginalPrice = 1299.99m,
                             ProductId = 23,
-                            SalePrice = 1299.99m,
-                            SalesDate = new DateTime(2025, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalePrice = 1202.49m,
+                            SalesDate = new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 15
                         },
                         new
                         {
                             Id = 49,
-                            CommissionAmount = 392.00m,
+                            AppliedDiscountId = 13,
+                            AppliedDiscountPercentage = 20.0m,
+                            CommissionAmount = 313.60m,
                             CustomerId = 19,
-                            ProductId = 24,
-                            SalePrice = 2799.99m,
+                            OriginalPrice = 2799.99m,
+                            ProductId = 13,
+                            SalePrice = 2239.99m,
                             SalesDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 1
                         },
                         new
                         {
                             Id = 50,
-                            CommissionAmount = 209.00m,
+                            AppliedDiscountId = 14,
+                            AppliedDiscountPercentage = 10.0m,
+                            CommissionAmount = 188.10m,
                             CustomerId = 20,
-                            ProductId = 25,
-                            SalePrice = 1899.99m,
+                            OriginalPrice = 1899.99m,
+                            ProductId = 14,
+                            SalePrice = 1709.99m,
                             SalesDate = new DateTime(2025, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SalespersonId = 2
+                        },
+                        new
+                        {
+                            Id = 51,
+                            AppliedDiscountId = 20,
+                            AppliedDiscountPercentage = 5.0m,
+                            CommissionAmount = 219.45m,
+                            CustomerId = 21,
+                            OriginalPrice = 2099.99m,
+                            ProductId = 15,
+                            SalePrice = 1994.99m,
+                            SalesDate = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 3
+                        },
+                        new
+                        {
+                            Id = 52,
+                            AppliedDiscountId = 20,
+                            AppliedDiscountPercentage = 5.0m,
+                            CommissionAmount = 119.70m,
+                            CustomerId = 22,
+                            OriginalPrice = 1799.99m,
+                            ProductId = 17,
+                            SalePrice = 1709.99m,
+                            SalesDate = new DateTime(2025, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 4
+                        },
+                        new
+                        {
+                            Id = 53,
+                            AppliedDiscountCode = "PRO16DEAL",
+                            AppliedDiscountId = 27,
+                            AppliedDiscountPercentage = 25.0m,
+                            CommissionAmount = 210.37m,
+                            CustomerId = 23,
+                            OriginalPrice = 3299.99m,
+                            ProductId = 16,
+                            SalePrice = 2474.99m,
+                            SalesDate = new DateTime(2025, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 5
+                        },
+                        new
+                        {
+                            Id = 54,
+                            AppliedDiscountCode = "ELITE18",
+                            AppliedDiscountId = 28,
+                            AppliedDiscountPercentage = 22.0m,
+                            CommissionAmount = 273.78m,
+                            CustomerId = 24,
+                            OriginalPrice = 2599.99m,
+                            ProductId = 18,
+                            SalePrice = 2027.99m,
+                            SalesDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 6
+                        },
+                        new
+                        {
+                            Id = 55,
+                            AppliedDiscountCode = "BIKE20SPRING",
+                            AppliedDiscountId = 29,
+                            AppliedDiscountPercentage = 18.0m,
+                            CommissionAmount = 311.19m,
+                            CustomerId = 25,
+                            OriginalPrice = 3299.99m,
+                            ProductId = 20,
+                            SalePrice = 2705.99m,
+                            SalesDate = new DateTime(2025, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 7
+                        },
+                        new
+                        {
+                            Id = 56,
+                            AppliedDiscountCode = "MARCH2025",
+                            AppliedDiscountId = 30,
+                            AppliedDiscountPercentage = 10.0m,
+                            CommissionAmount = 144.00m,
+                            CustomerId = 26,
+                            OriginalPrice = 1599.99m,
+                            ProductId = 21,
+                            SalePrice = 1439.99m,
+                            SalesDate = new DateTime(2025, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 8
+                        },
+                        new
+                        {
+                            Id = 57,
+                            AppliedDiscountCode = "SPRING2025",
+                            AppliedDiscountId = 31,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 244.37m,
+                            CustomerId = 27,
+                            OriginalPrice = 2299.99m,
+                            ProductId = 22,
+                            SalePrice = 1954.99m,
+                            SalesDate = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 9
+                        },
+                        new
+                        {
+                            Id = 58,
+                            AppliedDiscountCode = "SPRING2025",
+                            AppliedDiscountId = 31,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 94.92m,
+                            CustomerId = 28,
+                            OriginalPrice = 1299.99m,
+                            ProductId = 24,
+                            SalePrice = 1104.99m,
+                            SalesDate = new DateTime(2025, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 10
+                        },
+                        new
+                        {
+                            Id = 59,
+                            AppliedDiscountPercentage = 0.0m,
+                            CommissionAmount = 135.00m,
+                            CustomerId = 29,
+                            OriginalPrice = 1499.99m,
+                            ProductId = 1,
+                            SalePrice = 1499.99m,
+                            SalesDate = new DateTime(2025, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 11
+                        },
+                        new
+                        {
+                            Id = 60,
+                            AppliedDiscountPercentage = 0.0m,
+                            CommissionAmount = 242.00m,
+                            CustomerId = 30,
+                            OriginalPrice = 2199.99m,
+                            ProductId = 2,
+                            SalePrice = 2199.99m,
+                            SalesDate = new DateTime(2025, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 12
+                        },
+                        new
+                        {
+                            Id = 61,
+                            AppliedDiscountPercentage = 0.0m,
+                            CommissionAmount = 247.00m,
+                            CustomerId = 1,
+                            OriginalPrice = 1899.99m,
+                            ProductId = 3,
+                            SalePrice = 1899.99m,
+                            SalesDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 13
+                        },
+                        new
+                        {
+                            Id = 62,
+                            AppliedDiscountPercentage = 0.0m,
+                            CommissionAmount = 154.00m,
+                            CustomerId = 2,
+                            OriginalPrice = 1399.99m,
+                            ProductId = 4,
+                            SalePrice = 1399.99m,
+                            SalesDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 14
+                        },
+                        new
+                        {
+                            Id = 63,
+                            AppliedDiscountPercentage = 0.0m,
+                            CommissionAmount = 299.00m,
+                            CustomerId = 3,
+                            OriginalPrice = 2299.99m,
+                            ProductId = 5,
+                            SalePrice = 2299.99m,
+                            SalesDate = new DateTime(2025, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 15
+                        },
+                        new
+                        {
+                            Id = 64,
+                            AppliedDiscountCode = "SPRING2025",
+                            AppliedDiscountId = 31,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 176.00m,
+                            CustomerId = 4,
+                            OriginalPrice = 1799.99m,
+                            ProductId = 6,
+                            SalePrice = 1529.99m,
+                            SalesDate = new DateTime(2025, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 1
+                        },
+                        new
+                        {
+                            Id = 65,
+                            AppliedDiscountCode = "MARCH2025",
+                            AppliedDiscountId = 30,
+                            AppliedDiscountPercentage = 10.0m,
+                            CommissionAmount = 237.60m,
+                            CustomerId = 5,
+                            OriginalPrice = 2199.99m,
+                            ProductId = 7,
+                            SalePrice = 1979.99m,
+                            SalesDate = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 2
+                        },
+                        new
+                        {
+                            Id = 66,
+                            AppliedDiscountId = 15,
+                            AppliedDiscountPercentage = 15.0m,
+                            CommissionAmount = 214.20m,
+                            CustomerId = 6,
+                            OriginalPrice = 1799.99m,
+                            ProductId = 15,
+                            SalePrice = 1529.99m,
+                            SalesDate = new DateTime(2025, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 3
+                        },
+                        new
+                        {
+                            Id = 67,
+                            AppliedDiscountId = 13,
+                            AppliedDiscountPercentage = 20.0m,
+                            CommissionAmount = 200.00m,
+                            CustomerId = 7,
+                            OriginalPrice = 2499.99m,
+                            ProductId = 13,
+                            SalePrice = 1999.99m,
+                            SalesDate = new DateTime(2025, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 4
+                        },
+                        new
+                        {
+                            Id = 68,
+                            AppliedDiscountId = 20,
+                            AppliedDiscountPercentage = 5.0m,
+                            CommissionAmount = 71.25m,
+                            CustomerId = 8,
+                            OriginalPrice = 999.99m,
+                            ProductId = 8,
+                            SalePrice = 949.99m,
+                            SalesDate = new DateTime(2025, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 5
+                        },
+                        new
+                        {
+                            Id = 69,
+                            AppliedDiscountId = 20,
+                            AppliedDiscountPercentage = 5.0m,
+                            CommissionAmount = 91.20m,
+                            CustomerId = 9,
+                            OriginalPrice = 1199.99m,
+                            ProductId = 9,
+                            SalePrice = 1139.99m,
+                            SalesDate = new DateTime(2025, 3, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 6
+                        },
+                        new
+                        {
+                            Id = 70,
+                            AppliedDiscountId = 20,
+                            AppliedDiscountPercentage = 5.0m,
+                            CommissionAmount = 207.57m,
+                            CustomerId = 10,
+                            OriginalPrice = 1899.99m,
+                            ProductId = 10,
+                            SalePrice = 1804.99m,
+                            SalesDate = new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SalespersonId = 7
                         });
                 });
 
@@ -1378,7 +1925,10 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FirstName", "LastName")
+                    b.HasIndex("FirstName", "LastName", "Address")
+                        .IsUnique();
+
+                    b.HasIndex("FirstName", "LastName", "Phone")
                         .IsUnique();
 
                     b.ToTable("Salespersons");
@@ -1592,15 +2142,17 @@ namespace server.Migrations
                 {
                     b.HasOne("server.Models.Product", "Product")
                         .WithMany("Discounts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.Navigation("Product");
                 });
 
             modelBuilder.Entity("server.Models.Sale", b =>
                 {
+                    b.HasOne("server.Models.Discount", "AppliedDiscount")
+                        .WithMany()
+                        .HasForeignKey("AppliedDiscountId");
+
                     b.HasOne("server.Models.Customer", "Customer")
                         .WithMany("Sales")
                         .HasForeignKey("CustomerId")
@@ -1618,6 +2170,8 @@ namespace server.Migrations
                         .HasForeignKey("SalespersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AppliedDiscount");
 
                     b.Navigation("Customer");
 

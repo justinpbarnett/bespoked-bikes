@@ -1,8 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using server.Common.Interfaces;
-using server.Features.Products.Commands;
-using server.Features.Products.Queries;
+using server.Features.Customers;
+using server.Features.Dashboard;
+using server.Features.Discounts;
+using server.Features.Products;
+using server.Features.Sales;
+using server.Features.Salespersons;
 using server.Infrastructure.Data;
 using server.Models;
 
@@ -38,12 +42,46 @@ public static class ServiceCollectionExtensions
     {
         // Register repositories
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        
-        // Register Product feature services
+
+        // Product services
         builder.Services.AddScoped<GetProductsQuery>();
         builder.Services.AddScoped<GetProductByIdQuery>();
         builder.Services.AddScoped<CreateProductCommand>();
         builder.Services.AddScoped<UpdateProductCommand>();
+
+        // Customer services
+        builder.Services.AddScoped<GetCustomersQuery>();
+        builder.Services.AddScoped<GetCustomerByIdQuery>();
+        builder.Services.AddScoped<CreateCustomerCommand>();
+
+        // Salesperson services
+        builder.Services.AddScoped<GetSalespersonsQuery>();
+        builder.Services.AddScoped<GetSalespersonByIdQuery>();
+        builder.Services.AddScoped<CreateSalespersonCommand>();
+        builder.Services.AddScoped<UpdateSalespersonCommand>();
+
+        // Sales services
+        builder.Services.AddScoped<GetSalesQuery>();
+        builder.Services.AddScoped<GetSaleDetailsQuery>();
+        builder.Services.AddScoped<FilterSalesQuery>();
+        builder.Services.AddScoped<CreateSaleCommand>();
+
+        // Discount services
+        builder.Services.AddScoped<GetDiscountsQuery>();
+        builder.Services.AddScoped<GetDiscountByIdQuery>();
+        builder.Services.AddScoped<GetActiveDiscountsForProductQuery>();
+        builder.Services.AddScoped<GetGlobalDiscountsQuery>();
+        builder.Services.AddScoped<CreateDiscountCommand>();
+        builder.Services.AddScoped<UpdateDiscountCommand>();
+        builder.Services.AddScoped<DeleteDiscountCommand>();
+
+        // Dashboard services
+        builder.Services.AddScoped<GetDashboardSummaryQuery>();
+        builder.Services.AddScoped<GetRecentSalesQuery>();
+        builder.Services.AddScoped<GetMonthlySalesQuery>();
+        builder.Services.AddScoped<GetTopSalespersonsQuery>();
+        builder.Services.AddScoped<GetInventoryAlertsQuery>();
+        builder.Services.AddScoped<GetProductPerformanceQuery>();
     }
 
     private static void AddSwagger(WebApplicationBuilder builder)
@@ -72,7 +110,7 @@ public static class ServiceCollectionExtensions
                     errorNumbersToAdd: null);
                 sqlOptions.CommandTimeout(30);
             });
-            
+
             if (!builder.Environment.IsDevelopment())
             {
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -92,7 +130,7 @@ public static class ServiceCollectionExtensions
                 policy.WithOrigins(corsOrigins)
                       .AllowAnyMethod()
                       .AllowAnyHeader();
-                
+
                 if (!builder.Environment.IsDevelopment())
                 {
                     policy.AllowCredentials();

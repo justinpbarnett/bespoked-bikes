@@ -72,6 +72,17 @@ export function MainNav() {
             Sales
           </Link>
           <Link
+            to="/discounts"
+            className={cn(
+              "text-sm font-medium transition-colors hover:text-primary",
+              pathname === "/discounts" || pathname.startsWith("/discounts/")
+                ? "text-primary"
+                : "text-muted-foreground"
+            )}
+          >
+            Discounts
+          </Link>
+          <Link
             to="/reports"
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",

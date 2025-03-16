@@ -56,7 +56,7 @@ export default function SalespersonForm({
     },
     onError: (err: any) => {
       console.error("Update error:", err);
-      
+
       // Check if we have a detailed error message from the server
       if (err.response?.data) {
         // If it's a string, use it directly
@@ -66,19 +66,23 @@ export default function SalespersonForm({
         // If it's an object with a detail or message property
         else if (err.response.data.detail) {
           setError(err.response.data.detail);
-        }
-        else if (err.response.data.message) {
+        } else if (err.response.data.message) {
           setError(err.response.data.message);
         }
         // If it's a title from the problem details
         else if (err.response.data.title) {
-          setError(`${err.response.data.title}: ${err.response.data.detail || "Please check your input."}`);
-        }
-        else {
+          setError(
+            `${err.response.data.title}: ${
+              err.response.data.detail || "Please check your input."
+            }`
+          );
+        } else {
           setError(JSON.stringify(err.response.data));
         }
       } else {
-        setError(`Failed to update salesperson: ${err.message || "Unknown error"}`);
+        setError(
+          `Failed to update salesperson: ${err.message || "Unknown error"}`
+        );
       }
     },
   });
@@ -124,31 +128,21 @@ export default function SalespersonForm({
 
     // Properly handle terminationDate for the API
     // Convert empty string to null
-    if (!submissionData.terminationDate || submissionData.terminationDate === "") {
+    if (
+      !submissionData.terminationDate ||
+      submissionData.terminationDate === ""
+    ) {
       submissionData.terminationDate = null as any; // using 'any' to bypass TypeScript type checking
     }
-    
+
     // Trim whitespace from all string fields to prevent accidental spaces
-    Object.keys(submissionData).forEach(key => {
+    Object.keys(submissionData).forEach((key) => {
       const value = submissionData[key as keyof typeof submissionData];
-      if (typeof value === 'string') {
-        submissionData[key as keyof typeof submissionData] = value.trim() as any;
+      if (typeof value === "string") {
+        submissionData[key as keyof typeof submissionData] =
+          value.trim() as any;
       }
     });
-    
-    // Log detailed information for debugging
-    if (isEditing && salesperson) {
-      console.log("Updating salesperson:", {
-        id: salesperson.id,
-        formData: submissionData,
-        requestPayload: {
-          id: salesperson.id,  // This should be included in the body
-          ...submissionData
-        }
-      });
-    } else {
-      console.log("Creating new salesperson:", submissionData);
-    }
 
     if (isEditing && salesperson) {
       updateMutation.mutate({

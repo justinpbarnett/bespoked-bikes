@@ -25,6 +25,19 @@ public class Sale
     [Range(0, double.MaxValue)]
     public decimal CommissionAmount { get; set; }
 
+    public int? AppliedDiscountId { get; set; }
+
+    [Required]
+    [Range(0, 100)]
+    public decimal AppliedDiscountPercentage { get; set; } = 0;
+
+    [Required]
+    [Range(0, double.MaxValue)]
+    public decimal OriginalPrice { get; set; }
+
+    // Store the discount code that was applied (if any)
+    public string? AppliedDiscountCode { get; set; }
+
     [ForeignKey("ProductId")]
     public Product Product { get; set; } = null!;
 
@@ -33,13 +46,7 @@ public class Sale
 
     [ForeignKey("CustomerId")]
     public Customer Customer { get; set; } = null!;
-}
 
-
-public class SaleCreateDto
-{
-    public int ProductId { get; set; }
-    public int SalespersonId { get; set; }
-    public int CustomerId { get; set; }
-    public DateTime SalesDate { get; set; }
+    [ForeignKey("AppliedDiscountId")]
+    public Discount? AppliedDiscount { get; set; }
 }

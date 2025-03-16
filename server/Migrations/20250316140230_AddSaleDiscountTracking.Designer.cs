@@ -12,8 +12,8 @@ using server.Infrastructure.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250315210039_AddMoreMockData")]
-    partial class AddMoreMockData
+    [Migration("20250316140230_AddSaleDiscountTracking")]
+    partial class AddSaleDiscountTracking
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -495,13 +495,11 @@ namespace server.Migrations
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("PurchasePrice")
                         .HasColumnType("decimal(18,2)");
@@ -514,8 +512,7 @@ namespace server.Migrations
 
                     b.Property<string>("Style")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -598,7 +595,7 @@ namespace server.Migrations
                             Manufacturer = "Cervélo",
                             Name = "Speed Demon Racing",
                             PurchasePrice = 2000m,
-                            QuantityOnHand = 3,
+                            QuantityOnHand = 0,
                             SalePrice = 3599.99m,
                             Style = "Road"
                         },
@@ -810,11 +807,20 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AppliedDiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AppliedDiscountPercentage")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("CommissionAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("OriginalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -830,6 +836,8 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppliedDiscountId");
+
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ProductId");
@@ -842,8 +850,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 157.50m,
                             CustomerId = 1,
+                            OriginalPrice = 0m,
                             ProductId = 1,
                             SalePrice = 1499.99m,
                             SalesDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -852,8 +862,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 2,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 264.00m,
                             CustomerId = 2,
+                            OriginalPrice = 0m,
                             ProductId = 2,
                             SalePrice = 2199.99m,
                             SalesDate = new DateTime(2023, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -862,8 +874,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 3,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 110.50m,
                             CustomerId = 3,
+                            OriginalPrice = 0m,
                             ProductId = 3,
                             SalePrice = 1299.99m,
                             SalesDate = new DateTime(2023, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -872,8 +886,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 4,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 126.00m,
                             CustomerId = 4,
+                            OriginalPrice = 0m,
                             ProductId = 4,
                             SalePrice = 1399.99m,
                             SalesDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -882,8 +898,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 5,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 5,
+                            OriginalPrice = 0m,
                             ProductId = 5,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -892,8 +910,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 6,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 337.50m,
                             CustomerId = 6,
+                            OriginalPrice = 0m,
                             ProductId = 6,
                             SalePrice = 2499.99m,
                             SalesDate = new DateTime(2023, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -902,8 +922,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 7,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 540.00m,
                             CustomerId = 7,
+                            OriginalPrice = 0m,
                             ProductId = 7,
                             SalePrice = 3599.99m,
                             SalesDate = new DateTime(2023, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -912,8 +934,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 8,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 75.00m,
                             CustomerId = 8,
+                            OriginalPrice = 0m,
                             ProductId = 8,
                             SalePrice = 999.99m,
                             SalesDate = new DateTime(2023, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -922,8 +946,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 9,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 96.00m,
                             CustomerId = 9,
+                            OriginalPrice = 0m,
                             ProductId = 9,
                             SalePrice = 1199.99m,
                             SalesDate = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -932,8 +958,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 10,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 218.50m,
                             CustomerId = 10,
+                            OriginalPrice = 0m,
                             ProductId = 10,
                             SalePrice = 1899.99m,
                             SalesDate = new DateTime(2023, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -942,8 +970,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 11,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 160.00m,
                             CustomerId = 11,
+                            OriginalPrice = 0m,
                             ProductId = 11,
                             SalePrice = 1599.99m,
                             SalesDate = new DateTime(2023, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -952,8 +982,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 12,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 12,
+                            OriginalPrice = 0m,
                             ProductId = 12,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2023, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -962,8 +994,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 13,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 30.00m,
                             CustomerId = 13,
+                            OriginalPrice = 0m,
                             ProductId = 13,
                             SalePrice = 499.99m,
                             SalesDate = new DateTime(2023, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -972,8 +1006,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 14,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 312.00m,
                             CustomerId = 14,
+                            OriginalPrice = 0m,
                             ProductId = 14,
                             SalePrice = 2399.99m,
                             SalesDate = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -982,8 +1018,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 15,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 15,
+                            OriginalPrice = 0m,
                             ProductId = 15,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2023, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -992,8 +1030,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 16,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 420.00m,
                             CustomerId = 16,
+                            OriginalPrice = 0m,
                             ProductId = 16,
                             SalePrice = 2999.99m,
                             SalesDate = new DateTime(2023, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1002,8 +1042,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 17,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 17,
+                            OriginalPrice = 0m,
                             ProductId = 17,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2023, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1012,8 +1054,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 18,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 351.00m,
                             CustomerId = 18,
+                            OriginalPrice = 0m,
                             ProductId = 18,
                             SalePrice = 2599.99m,
                             SalesDate = new DateTime(2023, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1022,8 +1066,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 19,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 56.00m,
                             CustomerId = 19,
+                            OriginalPrice = 0m,
                             ProductId = 19,
                             SalePrice = 799.99m,
                             SalesDate = new DateTime(2023, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1032,8 +1078,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 20,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 511.50m,
                             CustomerId = 20,
+                            OriginalPrice = 0m,
                             ProductId = 20,
                             SalePrice = 3299.99m,
                             SalesDate = new DateTime(2023, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1042,8 +1090,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 21,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 624.00m,
                             CustomerId = 21,
+                            OriginalPrice = 0m,
                             ProductId = 21,
                             SalePrice = 3899.99m,
                             SalesDate = new DateTime(2023, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1052,8 +1102,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 22,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 63.00m,
                             CustomerId = 22,
+                            OriginalPrice = 0m,
                             ProductId = 22,
                             SalePrice = 899.99m,
                             SalesDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1062,8 +1114,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 23,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 110.50m,
                             CustomerId = 23,
+                            OriginalPrice = 0m,
                             ProductId = 23,
                             SalePrice = 1299.99m,
                             SalesDate = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1072,8 +1126,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 24,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 392.00m,
                             CustomerId = 24,
+                            OriginalPrice = 0m,
                             ProductId = 24,
                             SalePrice = 2799.99m,
                             SalesDate = new DateTime(2024, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1082,8 +1138,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 25,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 209.00m,
                             CustomerId = 25,
+                            OriginalPrice = 0m,
                             ProductId = 25,
                             SalePrice = 1899.99m,
                             SalesDate = new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1092,8 +1150,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 26,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 157.50m,
                             CustomerId = 26,
+                            OriginalPrice = 0m,
                             ProductId = 1,
                             SalePrice = 1499.99m,
                             SalesDate = new DateTime(2024, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1102,8 +1162,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 27,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 264.00m,
                             CustomerId = 27,
+                            OriginalPrice = 0m,
                             ProductId = 2,
                             SalePrice = 2199.99m,
                             SalesDate = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1112,8 +1174,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 28,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 110.50m,
                             CustomerId = 28,
+                            OriginalPrice = 0m,
                             ProductId = 3,
                             SalePrice = 1299.99m,
                             SalesDate = new DateTime(2024, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1122,8 +1186,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 29,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 126.00m,
                             CustomerId = 29,
+                            OriginalPrice = 0m,
                             ProductId = 4,
                             SalePrice = 1399.99m,
                             SalesDate = new DateTime(2024, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1132,8 +1198,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 30,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 30,
+                            OriginalPrice = 0m,
                             ProductId = 5,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2024, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1142,8 +1210,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 31,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 337.50m,
                             CustomerId = 1,
+                            OriginalPrice = 0m,
                             ProductId = 6,
                             SalePrice = 2499.99m,
                             SalesDate = new DateTime(2024, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1152,8 +1222,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 32,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 540.00m,
                             CustomerId = 2,
+                            OriginalPrice = 0m,
                             ProductId = 7,
                             SalePrice = 3599.99m,
                             SalesDate = new DateTime(2024, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1162,8 +1234,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 33,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 75.00m,
                             CustomerId = 3,
+                            OriginalPrice = 0m,
                             ProductId = 8,
                             SalePrice = 999.99m,
                             SalesDate = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1172,8 +1246,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 34,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 96.00m,
                             CustomerId = 4,
+                            OriginalPrice = 0m,
                             ProductId = 9,
                             SalePrice = 1199.99m,
                             SalesDate = new DateTime(2024, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1182,8 +1258,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 35,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 218.50m,
                             CustomerId = 5,
+                            OriginalPrice = 0m,
                             ProductId = 10,
                             SalePrice = 1899.99m,
                             SalesDate = new DateTime(2024, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1192,8 +1270,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 36,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 160.00m,
                             CustomerId = 6,
+                            OriginalPrice = 0m,
                             ProductId = 11,
                             SalePrice = 1599.99m,
                             SalesDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1202,8 +1282,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 37,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 7,
+                            OriginalPrice = 0m,
                             ProductId = 12,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2024, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1212,8 +1294,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 38,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 30.00m,
                             CustomerId = 8,
+                            OriginalPrice = 0m,
                             ProductId = 13,
                             SalePrice = 499.99m,
                             SalesDate = new DateTime(2024, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1222,8 +1306,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 39,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 312.00m,
                             CustomerId = 9,
+                            OriginalPrice = 0m,
                             ProductId = 14,
                             SalePrice = 2399.99m,
                             SalesDate = new DateTime(2024, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1232,8 +1318,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 40,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 287.50m,
                             CustomerId = 10,
+                            OriginalPrice = 0m,
                             ProductId = 15,
                             SalePrice = 2299.99m,
                             SalesDate = new DateTime(2024, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1242,8 +1330,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 41,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 420.00m,
                             CustomerId = 11,
+                            OriginalPrice = 0m,
                             ProductId = 16,
                             SalePrice = 2999.99m,
                             SalesDate = new DateTime(2024, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1252,8 +1342,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 42,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 220.00m,
                             CustomerId = 12,
+                            OriginalPrice = 0m,
                             ProductId = 17,
                             SalePrice = 1999.99m,
                             SalesDate = new DateTime(2024, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1262,8 +1354,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 43,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 351.00m,
                             CustomerId = 13,
+                            OriginalPrice = 0m,
                             ProductId = 18,
                             SalePrice = 2599.99m,
                             SalesDate = new DateTime(2024, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1272,8 +1366,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 44,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 56.00m,
                             CustomerId = 14,
+                            OriginalPrice = 0m,
                             ProductId = 19,
                             SalePrice = 799.99m,
                             SalesDate = new DateTime(2024, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1282,8 +1378,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 45,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 511.50m,
                             CustomerId = 15,
+                            OriginalPrice = 0m,
                             ProductId = 20,
                             SalePrice = 3299.99m,
                             SalesDate = new DateTime(2025, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1292,8 +1390,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 46,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 624.00m,
                             CustomerId = 16,
+                            OriginalPrice = 0m,
                             ProductId = 21,
                             SalePrice = 3899.99m,
                             SalesDate = new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1302,8 +1402,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 47,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 63.00m,
                             CustomerId = 17,
+                            OriginalPrice = 0m,
                             ProductId = 22,
                             SalePrice = 899.99m,
                             SalesDate = new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1312,8 +1414,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 48,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 110.50m,
                             CustomerId = 18,
+                            OriginalPrice = 0m,
                             ProductId = 23,
                             SalePrice = 1299.99m,
                             SalesDate = new DateTime(2025, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1322,8 +1426,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 49,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 392.00m,
                             CustomerId = 19,
+                            OriginalPrice = 0m,
                             ProductId = 24,
                             SalePrice = 2799.99m,
                             SalesDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1332,8 +1438,10 @@ namespace server.Migrations
                         new
                         {
                             Id = 50,
+                            AppliedDiscountPercentage = 0m,
                             CommissionAmount = 209.00m,
                             CustomerId = 20,
+                            OriginalPrice = 0m,
                             ProductId = 25,
                             SalePrice = 1899.99m,
                             SalesDate = new DateTime(2025, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1381,7 +1489,10 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FirstName", "LastName")
+                    b.HasIndex("FirstName", "LastName", "Address")
+                        .IsUnique();
+
+                    b.HasIndex("FirstName", "LastName", "Phone")
                         .IsUnique();
 
                     b.ToTable("Salespersons");
@@ -1604,6 +1715,10 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.Models.Sale", b =>
                 {
+                    b.HasOne("server.Models.Discount", "AppliedDiscount")
+                        .WithMany()
+                        .HasForeignKey("AppliedDiscountId");
+
                     b.HasOne("server.Models.Customer", "Customer")
                         .WithMany("Sales")
                         .HasForeignKey("CustomerId")
@@ -1621,6 +1736,8 @@ namespace server.Migrations
                         .HasForeignKey("SalespersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AppliedDiscount");
 
                     b.Navigation("Customer");
 

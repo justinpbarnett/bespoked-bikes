@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.SeedData;
 using server.Models;
 
 namespace server.Infrastructure.Data.SeedData;

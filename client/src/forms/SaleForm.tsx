@@ -25,6 +25,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
     salespersonId: 0,
     customerId: 0,
     salesDate: format(new Date(), "yyyy-MM-dd"),
+    discountCode: "",
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +77,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "salesDate" ? value : parseInt(value, 10),
+      [name]: name === "salesDate" || name === "discountCode" ? value : parseInt(value, 10),
     }));
   };
 
@@ -194,6 +195,18 @@ export default function SaleForm({ onClose }: SaleFormProps) {
               value={formData.salesDate}
               onChange={handleChange}
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="discountCode">Discount Code (optional)</Label>
+            <Input
+              id="discountCode"
+              name="discountCode"
+              type="text"
+              placeholder="Enter discount code if you have one"
+              value={formData.discountCode}
+              onChange={handleChange}
             />
           </div>
         </div>
