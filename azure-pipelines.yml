@@ -47,10 +47,13 @@ jobs:
                 WEBSITE_RUN_FROM_PACKAGE=1 `
                 PORT=80 `
                 ASPNETCORE_ENVIRONMENT=Production `
-                DB_CONNECTION_STRING="$(DB_CONNECTION_STRING)" `
-                JWT_SECRET="$(JWT_SECRET)" `
+                DB_CONNECTION_STRING="$env:DB_CONNECTION_STRING" `
+                JWT_SECRET="$env:JWT_SECRET" `
                 CORS_ORIGINS="https://bespoked-bikes.azurestaticapps.net" `
                 LOG_LEVEL=Information
+        env:
+          DB_CONNECTION_STRING: $(DB_CONNECTION_STRING)
+          JWT_SECRET: $(JWT_SECRET)
 
   - job: BuildAndDeployWeb
     dependsOn: BuildAndDeployAPI
