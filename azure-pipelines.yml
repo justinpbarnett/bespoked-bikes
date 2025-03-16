@@ -33,12 +33,14 @@ jobs:
           appName: "$(api_app_name)"
           package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
           appSettings: |
-            PORT=80
-            ASPNETCORE_ENVIRONMENT=Production
-            DB_CONNECTION_STRING=$(DB_CONNECTION_STRING)
-            JWT_SECRET=$(JWT_SECRET)
-            CORS_ORIGINS=https://bespoked-bikes.azurestaticapps.net
-            LOG_LEVEL=Information
+            {
+              "PORT": "80",
+              "ASPNETCORE_ENVIRONMENT": "Production",
+              "DB_CONNECTION_STRING": "$(DB_CONNECTION_STRING)",
+              "JWT_SECRET": "$(JWT_SECRET)",
+              "CORS_ORIGINS": "https://bespoked-bikes.azurestaticapps.net",
+              "LOG_LEVEL": "Information"
+            }
 
   - job: BuildAndDeployWeb
     dependsOn: BuildAndDeployAPI
