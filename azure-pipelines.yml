@@ -11,7 +11,7 @@ pool:
 
 variables:
   - name: VITE_API_URL
-    value: "https://bespoked-bikes-service.azurewebsites.net/api"
+    value: "https://bespoked-bikes-service-g0bea9c6adgfhcb9.centralus-01.azurewebsites.net/api"
 
 steps:
   - task: NodeTool@0

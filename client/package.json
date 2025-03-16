@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "publish": "swa deploy ./dist/ --env production --deployment-token 89e57803e75643db204db0a9c83535209e2235dbdf716b253b760b530d9ef40706-beacd98d-2230-4313-8ffa-3121c0597c0600f0125088421f0f"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.3",

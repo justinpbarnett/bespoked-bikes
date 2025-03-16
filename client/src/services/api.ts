@@ -30,9 +30,13 @@ const API_URL = import.meta.env.VITE_API_URL || "/api";
 const api = axios.create({
   baseURL: API_URL,
   // Adding withCredentials if you need to handle cookies/auth
-  withCredentials: false,
+  withCredentials: true,
   // Add reasonable timeout but slightly shorter for development to see errors faster
   timeout: 10000, // 10 seconds
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 // Add request interceptor for authentication if needed

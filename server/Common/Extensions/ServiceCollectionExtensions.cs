@@ -120,7 +120,7 @@ public static class ServiceCollectionExtensions
     private static void AddCors(WebApplicationBuilder builder)
     {
         var corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(',')
-            ?? new[] { "http://localhost:3000", "http://localhost:5173" };
+            ?? new[] { "http://localhost:3000", "http://localhost:5173", "https://localhost:7219" };
 
         builder.Services.AddCors(options =>
         {
@@ -128,12 +128,9 @@ public static class ServiceCollectionExtensions
             {
                 policy.WithOrigins(corsOrigins)
                       .AllowAnyMethod()
-                      .AllowAnyHeader();
-
-                if (!builder.Environment.IsDevelopment())
-                {
-                    policy.AllowCredentials();
-                }
+                      .AllowAnyHeader()
+                      .AllowCredentials()
+                      .SetIsOriginAllowed(origin => true); // More permissive for development
             });
         });
     }

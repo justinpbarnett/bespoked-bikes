@@ -2,7 +2,7 @@
   "IsEncrypted": false,
   "Values": {
     "ASPNETCORE_ENVIRONMENT": "Production",
-    "CORS_ORIGINS": "https://bespoked-bikes-client.azurewebsites.net,https://bespokedbikes.com",
+    "CORS_ORIGINS": "https://icy-flower-0ae51dc0f.azurestaticapps.net,https://bespoked-bikes-client.azurewebsites.net,https://bespokedbikes.com",
     "LOG_LEVEL": "Warning"
   },
   "ConnectionStrings": {

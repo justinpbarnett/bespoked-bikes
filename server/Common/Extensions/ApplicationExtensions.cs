@@ -21,7 +21,10 @@ public static class ApplicationExtensions
 
         app.UseHttpsRedirection();
         app.UseResponseCaching();
+
+        // CORS must be before routing
         app.UseCors("AllowReactApp");
+
         app.UseRouting();
 
         return app;
