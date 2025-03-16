@@ -25,6 +25,12 @@ steps:
       npm run build
     displayName: "npm install and build"
 
+  - task: CopyFiles@2
+    inputs:
+      Contents: "client/dist/**"
+      TargetFolder: "$(Build.ArtifactStagingDirectory)"
+    displayName: "Copy build files"
+
   - task: AzureStaticWebApp@0
     inputs:
       app_location: "client/dist"
