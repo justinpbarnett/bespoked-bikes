@@ -25,7 +25,6 @@ public class Sale
     [Range(0, double.MaxValue)]
     public decimal CommissionAmount { get; set; }
 
-    // Navigation properties
     [ForeignKey("ProductId")]
     public Product Product { get; set; } = null!;
 

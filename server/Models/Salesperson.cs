@@ -31,6 +31,5 @@ public class Salesperson
     [MaxLength(100)]
     public string? Manager { get; set; }
 
-    // Navigation properties
     public ICollection<Sale> Sales { get; set; } = new List<Sale>();
 }

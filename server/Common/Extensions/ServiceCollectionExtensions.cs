@@ -1,0 +1,116 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using server.Common.Interfaces;
+using server.Features.Products.Commands;
+using server.Features.Products.Queries;
+using server.Infrastructure.Data;
+using server.Models;
+
+namespace server.Common.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
+    {
+        // Add MVC controllers
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+
+        // Configure Swagger
+        AddSwagger(builder);
+
+        // Configure Database
+        AddDatabase(builder);
+
+        // Register repositories and services
+        AddApplicationServices(builder);
+
+        // Configure CORS
+        AddCors(builder);
+
+        // Configure Caching and Compression
+        AddCachingAndCompression(builder);
+
+        return builder;
+    }
+
+    private static void AddApplicationServices(WebApplicationBuilder builder)
+    {
+        // Register repositories
+        builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        
+        // Register Product feature services
+        builder.Services.AddScoped<GetProductsQuery>();
+        builder.Services.AddScoped<GetProductByIdQuery>();
+        builder.Services.AddScoped<CreateProductCommand>();
+        builder.Services.AddScoped<UpdateProductCommand>();
+    }
+
+    private static void AddSwagger(WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BeSpoked Bikes API", Version = "v1" });
+            });
+        }
+    }
+
+    private static void AddDatabase(WebApplicationBuilder builder)
+    {
+        var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+            ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseSqlServer(connectionString, sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null);
+                sqlOptions.CommandTimeout(30);
+            });
+            
+            if (!builder.Environment.IsDevelopment())
+            {
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            }
+        });
+    }
+
+    private static void AddCors(WebApplicationBuilder builder)
+    {
+        var corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(',')
+            ?? new[] { "http://localhost:3000", "http://localhost:5173" };
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp", policy =>
+            {
+                policy.WithOrigins(corsOrigins)
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+                
+                if (!builder.Environment.IsDevelopment())
+                {
+                    policy.AllowCredentials();
+                }
+            });
+        });
+    }
+
+    private static void AddCachingAndCompression(WebApplicationBuilder builder)
+    {
+        builder.Services.AddResponseCaching();
+
+        if (!builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
+        }
+    }
+}

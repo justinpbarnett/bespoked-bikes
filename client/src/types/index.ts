@@ -65,80 +65,19 @@ export interface Discount {
   };
 }
 
-export interface DetailedSale {
-  saleId: number;
-  salesDate: string;
-  productId: number;
-  productName: string;
-  customerId: number;
-  customerName: string;
-  salePrice: number;
-  commissionAmount: number;
-  commissionRate: number;
-}
-
-export interface SalespersonCommission {
-  salespersonId: number;
-  firstName: string;
-  lastName: string;
-  manager: string | null;
-  startDate: string | null;
-  totalSales: number;
-  totalRevenue: number;
-  totalCommission: number;
-  averageCommissionRate: number;
-  highestSale: number;
-  lowestSale: number;
-  firstSaleDate: string | null;
-  lastSaleDate: string | null;
-  detailedSales: DetailedSale[];
-}
-
-export interface ProductStyleSummary {
-  style: string;
-  totalSales: number;
-  totalRevenue: number;
-  totalCommission: number;
-  averagePrice: number;
-}
-
-export interface MonthlySummary {
-  month: number;
-  year: number;
-  totalSales: number;
-  totalRevenue: number;
-  totalCommission: number;
-}
-
-export interface TopProduct {
-  productId: number;
-  productName: string;
-  manufacturer: string;
-  totalSales: number;
-  totalRevenue: number;
-  totalCommission: number;
-}
-
-export interface QuarterSummary {
-  totalSales: number;
-  totalRevenue: number;
-  totalCommission: number;
-  averageCommissionRate: number;
-  averageSalePrice: number;
-  salespersonCount: number;
-  salespersonsWithSales: number;
-}
-
 export interface CommissionReport {
   year: number;
   quarter: number;
   startDate: string;
   endDate: string;
-  quarterSummary: QuarterSummary;
-  productStyles: ProductStyleSummary[];
-  monthlySummary: MonthlySummary[];
-  topProducts: TopProduct[];
-  commissions: SalespersonCommission[];
+  commissions: Array<{
+    salespersonId: number;
+    firstName: string;
+    lastName: string;
+    totalSales: number;
+    totalRevenue: number;
+    totalCommission: number;
+  }>;
 }
 
 // ----------------
