@@ -6,7 +6,7 @@ pool:
 
 variables:
   - name: api_app_name
-    value: "bespoked-bikes-server"
+    value: "bespoked-bikes-service"
   - name: API_URL
     value: "https://$(api_app_name).azurewebsites.net/api"
 
