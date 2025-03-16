@@ -3,14 +3,9 @@ using server.Infrastructure.Data;
 
 namespace server.Features.Reports;
 
-public class GetCommissionReportQuery
+public class GetCommissionReportQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetCommissionReportQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<CommissionReportDto> ExecuteAsync(int year, int quarter)
     {
@@ -32,7 +27,7 @@ public class GetCommissionReportQuery
             .OrderBy(s => s.SalespersonId)
             .ThenByDescending(s => s.SalesDate)
             .ToListAsync();
-            
+
         // Get quarterly summary per salesperson
         var salesByPerson = quarterSales
             .GroupBy(s => s.SalespersonId)
@@ -58,10 +53,10 @@ public class GetCommissionReportQuery
 
         // We'll use the quarterSales for other operations to avoid redundant database calls
         var salesInRange = quarterSales;
-            
+
         // Get all products
         var products = await _context.Products.ToListAsync();
-        
+
         // Join sales with products for detailed analysis
         var salesWithProducts = salesInRange
             .Join(products,
@@ -69,7 +64,7 @@ public class GetCommissionReportQuery
                 p => p.Id,
                 (s, p) => new { Sale = s, Product = p })
             .ToList();
-            
+
         // Get product sales by category
         var productStyleSales = salesWithProducts
             .GroupBy(j => j.Product.Style)
@@ -81,7 +76,7 @@ public class GetCommissionReportQuery
                 g.Average(j => j.Sale.SalePrice)
             ))
             .ToList();
-            
+
         var monthlySales = salesInRange
             .GroupBy(s => new { Month = s.SalesDate.Month, Year = s.SalesDate.Year })
             .Select(g => new MonthlySummaryDto(
@@ -181,11 +176,11 @@ public class GetCommissionReportQuery
         var averageCommissionRate = quarterSales.Any()
             ? Math.Round(quarterSales.Average(s => s.CommissionAmount / s.SalePrice * 100), 2)
             : 0;
-        
+
         var averageSalePrice = quarterSales.Any()
             ? Math.Round(quarterSales.Average(s => s.SalePrice), 2)
             : 0;
-            
+
         return new CommissionReportDto(
             year,
             quarter,

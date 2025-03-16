@@ -4,33 +4,22 @@ namespace server.Features.Discounts;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DiscountsController : ControllerBase
+public class DiscountsController(
+    GetDiscountsQuery getDiscountsQuery,
+    GetDiscountByIdQuery getDiscountByIdQuery,
+    GetActiveDiscountsForProductQuery getActiveDiscountsForProductQuery,
+    GetGlobalDiscountsQuery getGlobalDiscountsQuery,
+    CreateDiscountCommand createDiscountCommand,
+    UpdateDiscountCommand updateDiscountCommand,
+    DeleteDiscountCommand deleteDiscountCommand) : ControllerBase
 {
-    private readonly GetDiscountsQuery _getDiscountsQuery;
-    private readonly GetDiscountByIdQuery _getDiscountByIdQuery;
-    private readonly GetActiveDiscountsForProductQuery _getActiveDiscountsForProductQuery;
-    private readonly GetGlobalDiscountsQuery _getGlobalDiscountsQuery;
-    private readonly CreateDiscountCommand _createDiscountCommand;
-    private readonly UpdateDiscountCommand _updateDiscountCommand;
-    private readonly DeleteDiscountCommand _deleteDiscountCommand;
-
-    public DiscountsController(
-        GetDiscountsQuery getDiscountsQuery,
-        GetDiscountByIdQuery getDiscountByIdQuery,
-        GetActiveDiscountsForProductQuery getActiveDiscountsForProductQuery,
-        GetGlobalDiscountsQuery getGlobalDiscountsQuery,
-        CreateDiscountCommand createDiscountCommand,
-        UpdateDiscountCommand updateDiscountCommand,
-        DeleteDiscountCommand deleteDiscountCommand)
-    {
-        _getDiscountsQuery = getDiscountsQuery;
-        _getDiscountByIdQuery = getDiscountByIdQuery;
-        _getActiveDiscountsForProductQuery = getActiveDiscountsForProductQuery;
-        _getGlobalDiscountsQuery = getGlobalDiscountsQuery;
-        _createDiscountCommand = createDiscountCommand;
-        _updateDiscountCommand = updateDiscountCommand;
-        _deleteDiscountCommand = deleteDiscountCommand;
-    }
+    private readonly GetDiscountsQuery _getDiscountsQuery = getDiscountsQuery;
+    private readonly GetDiscountByIdQuery _getDiscountByIdQuery = getDiscountByIdQuery;
+    private readonly GetActiveDiscountsForProductQuery _getActiveDiscountsForProductQuery = getActiveDiscountsForProductQuery;
+    private readonly GetGlobalDiscountsQuery _getGlobalDiscountsQuery = getGlobalDiscountsQuery;
+    private readonly CreateDiscountCommand _createDiscountCommand = createDiscountCommand;
+    private readonly UpdateDiscountCommand _updateDiscountCommand = updateDiscountCommand;
+    private readonly DeleteDiscountCommand _deleteDiscountCommand = deleteDiscountCommand;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DiscountDto>>> GetDiscounts()
@@ -59,7 +48,7 @@ public class DiscountsController : ControllerBase
         var discounts = await _getActiveDiscountsForProductQuery.ExecuteAsync(productId, activeDate);
         return Ok(discounts);
     }
-    
+
     [HttpGet("global")]
     public async Task<ActionResult<IEnumerable<DiscountDto>>> GetGlobalDiscounts([FromQuery] DateTime? date)
     {

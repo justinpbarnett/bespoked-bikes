@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCommissionReport } from "../services/api";
+import { getCommissionReport } from "../services/report-service";
 import type {
   CommissionReport,
   DetailedSale,
@@ -195,7 +195,7 @@ export default function Reports() {
 
         sp.detailedSales.forEach((sale: DetailedSale) => {
           detailedReport.push(
-            `${formatDate(sale.saleDate)},${sale.productName},${
+            `${formatDate(sale.salesDate)},${sale.productName},${
               sale.customerName
             },${formatCurrency(sale.salePrice)},${formatCurrency(
               sale.commissionAmount
@@ -732,10 +732,10 @@ export default function Reports() {
                                   {selectedSalesperson.detailedSales.map(
                                     (sale: DetailedSale) => (
                                       <TableRow
-                                        key={`${sale.saleDate}-${sale.productName}`}
+                                        key={`${sale.salesDate}-${sale.productName}`}
                                       >
                                         <TableCell>
-                                          {formatDate(sale.saleDate)}
+                                          {formatDate(sale.salesDate)}
                                         </TableCell>
                                         <TableCell>
                                           {sale.productName}

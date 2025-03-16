@@ -1,27 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { SaleCreate, Product } from "@/types/index";
+import { SaleCreate, Product, Discount } from "@/types/index";
 import { useForm } from "@/hooks/use-form";
 import { useMutationWithInvalidation } from "@/hooks/use-mutation";
 import { formatCurrency } from "@/lib/format";
-import { 
+import {
   getProducts,
-  getSalespersons, 
+  getSalespersons,
   getCustomers,
-  createSale 
+  createSale,
+  getGlobalDiscounts,
 } from "@/services";
 import FormWrapper from "@/components/common/FormWrapper";
 import { SelectField, InputField } from "@/components/common/FormField";
+import { Badge } from "@/components/ui/badge";
 
 interface SaleFormProps {
   onClose: () => void;
 }
 
 export default function SaleForm({ onClose }: SaleFormProps) {
-  // Form validation function
+  const [validDiscount, setValidDiscount] = useState<Discount | null>(null);
+  const [checkingDiscount, setCheckingDiscount] = useState(false);
+
   const validateForm = (values: SaleCreate) => {
     const errors: Record<string, string> = {};
-    
+
     if (!values.productId) {
       errors.productId = "Please select a product";
     }
@@ -31,51 +35,52 @@ export default function SaleForm({ onClose }: SaleFormProps) {
     if (!values.customerId) {
       errors.customerId = "Please select a customer";
     }
-    if (!values.saleDate) {
-      errors.saleDate = "Please select a sale date";
+    if (!values.salesDate) {
+      errors.salesDate = "Please select a sale date";
+    } else {
+      const selectedDate = new Date(values.salesDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        errors.salesDate = "Sale date cannot be in the future";
+      }
     }
-    
+
     return errors;
   };
 
-  // Setup form with useForm hook
-  const { 
-    values, 
-    errors,
-    handleChange, 
-    handleSubmit,
-    setValues 
-  } = useForm({
+  const { values, errors, handleChange, handleSubmit, setValues } = useForm({
     initialValues: {
       productId: 0,
       customerId: 0,
       salespersonId: 0,
-      saleDate: new Date().toISOString().split("T")[0],
+      salesDate: new Date().toISOString().split("T")[0],
       salePrice: 0,
+      discountCode: "",
     } as SaleCreate,
     onSubmit: (values) => createMutation.mutate(values),
     validate: validateForm,
   });
 
-  // Setup mutation with our custom hook
   const createMutation = useMutationWithInvalidation({
     mutationFn: createSale,
     invalidateQueries: [
-      "sales", 
-      "dashboardSummary", 
-      "recentSales", 
-      "monthlySales", 
-      "topSalespersons", 
-      "productPerformance"
+      "sales",
+      "dashboardSummary",
+      "recentSales",
+      "monthlySales",
+      "topSalespersons",
+      "productPerformance",
     ],
     setQueryData: {
       queryKey: ["sales"],
-      updater: (oldData, newData) => oldData ? [newData, ...oldData] : [newData],
+      updater: (oldData, newData) =>
+        oldData ? [newData, ...oldData] : [newData],
     },
     onSuccess: () => onClose(),
   });
 
-  // Fetch related data
   const { data: products } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
@@ -91,47 +96,101 @@ export default function SaleForm({ onClose }: SaleFormProps) {
     queryFn: getCustomers,
   });
 
-  // Set default values when data loads
+  const { data: availableDiscounts } = useQuery({
+    queryKey: ["global-discounts", values.salesDate],
+    queryFn: () => getGlobalDiscounts(values.salesDate),
+    enabled: !!values.salesDate,
+  });
+
   useEffect(() => {
     if (products?.length && values.productId === 0) {
       setValues((prev: SaleCreate) => ({ ...prev, productId: products[0].id }));
     }
     if (salespersons?.length && values.salespersonId === 0) {
-      setValues((prev: SaleCreate) => ({ ...prev, salespersonId: salespersons[0].id }));
+      setValues((prev: SaleCreate) => ({
+        ...prev,
+        salespersonId: salespersons[0].id,
+      }));
     }
     if (customers?.length && values.customerId === 0) {
-      setValues((prev: SaleCreate) => ({ ...prev, customerId: customers[0].id }));
+      setValues((prev: SaleCreate) => ({
+        ...prev,
+        customerId: customers[0].id,
+      }));
     }
-  }, [products, salespersons, customers, values.productId, values.salespersonId, values.customerId, setValues]);
+  }, [
+    products,
+    salespersons,
+    customers,
+    values.productId,
+    values.salespersonId,
+    values.customerId,
+    setValues,
+  ]);
 
-  // Find selected product details
-  const selectedProduct = products?.find((p) => p.id === values.productId) as Product | undefined;
+  useEffect(() => {
+    setValidDiscount(null);
+
+    if (
+      !values.discountCode ||
+      values.discountCode.trim() === "" ||
+      !availableDiscounts
+    ) {
+      return;
+    }
+
+    setCheckingDiscount(true);
+
+    const matchingDiscount = availableDiscounts.find(
+      (d) =>
+        d.discountCode?.toLowerCase() === values.discountCode?.toLowerCase() &&
+        (d.product?.id === values.productId || d.isGlobal)
+    );
+
+    if (matchingDiscount) {
+      setValidDiscount(matchingDiscount);
+    }
+
+    setCheckingDiscount(false);
+  }, [values.discountCode, values.productId, availableDiscounts]);
+
+  const selectedProduct = products?.find((p) => p.id === values.productId) as
+    | Product
+    | undefined;
   const isOutOfStock = selectedProduct && selectedProduct.quantityOnHand <= 0;
 
-  // Create product options for select
-  const productOptions = products?.map(product => ({
-    value: product.id,
-    label: `${product.name} - ${formatCurrency(product.salePrice)}${product.quantityOnHand <= 0 ? " (Out of stock)" : ""}`,
-  })) || [];
+  const originalPrice = selectedProduct?.salePrice || 0;
+  const discountPercentage = validDiscount?.discountPercentage || 0;
+  const finalPrice = originalPrice * (1 - discountPercentage / 100);
 
-  // Create salesperson options for select
-  const salespersonOptions = salespersons?.map(person => ({
-    value: person.id,
-    label: `${person.firstName} ${person.lastName}`,
-  })) || [];
+  const productOptions =
+    products?.map((product) => ({
+      value: product.id,
+      label: `${product.name} - ${formatCurrency(product.salePrice)}${
+        product.quantityOnHand <= 0 ? " (Out of stock)" : ""
+      }`,
+    })) || [];
 
-  // Create customer options for select
-  const customerOptions = customers?.map(customer => ({
-    value: customer.id,
-    label: `${customer.firstName} ${customer.lastName}`,
-  })) || [];
+  const salespersonOptions =
+    salespersons?.map((person) => ({
+      value: person.id,
+      label: `${person.firstName} ${person.lastName}`,
+    })) || [];
+
+  const customerOptions =
+    customers?.map((customer) => ({
+      value: customer.id,
+      label: `${customer.firstName} ${customer.lastName}`,
+    })) || [];
 
   return (
     <FormWrapper
       title="Record New Sale"
       onClose={onClose}
       error={createMutation.error ? "Failed to record sale" : null}
-      warning={isOutOfStock ? "Warning: Selected product is out of stock!" : undefined}
+      warning={
+        isOutOfStock ? "Warning: Selected product is out of stock!" : undefined
+      }
       onSubmit={handleSubmit}
       isSubmitting={createMutation.isPending}
       submitLabel="Record Sale"
@@ -168,13 +227,24 @@ export default function SaleForm({ onClose }: SaleFormProps) {
         />
 
         <InputField
-          id="saleDate"
+          id="salesDate"
           label="Sale Date"
           type="date"
-          value={values.saleDate}
+          value={values.salesDate}
           onChange={handleChange}
-          error={errors.saleDate}
+          error={errors.salesDate}
           required
+          max={new Date().toISOString().split("T")[0]}
+        />
+
+        <InputField
+          id="discountCode"
+          label="Discount Code"
+          value={values.discountCode || ""}
+          onChange={handleChange}
+          placeholder="Enter discount code (optional)"
+          description="Enter a valid discount code to apply to this sale"
+          className="md:col-span-2"
         />
       </div>
 
@@ -184,14 +254,23 @@ export default function SaleForm({ onClose }: SaleFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="text-sm text-muted-foreground">
-                Sale Price:
+                Regular Price:
               </span>
-              <p>{formatCurrency(selectedProduct.salePrice)}</p>
+              <p
+                className={
+                  validDiscount ? "line-through text-muted-foreground" : ""
+                }
+              >
+                {formatCurrency(selectedProduct.salePrice)}
+              </p>
+              {validDiscount && (
+                <p className="text-green-600 font-medium">
+                  {formatCurrency(finalPrice)}
+                </p>
+              )}
             </div>
             <div>
-              <span className="text-sm text-muted-foreground">
-                Commission:
-              </span>
+              <span className="text-sm text-muted-foreground">Commission:</span>
               <p>{selectedProduct.commissionPercentage.toFixed(1)}%</p>
             </div>
             <div>
@@ -203,9 +282,35 @@ export default function SaleForm({ onClose }: SaleFormProps) {
                 Commission Amount:
               </span>
               <p>
-                {formatCurrency((selectedProduct.salePrice * selectedProduct.commissionPercentage) / 100)}
+                {formatCurrency(
+                  (finalPrice * selectedProduct.commissionPercentage) / 100
+                )}
               </p>
             </div>
+
+            {values.discountCode && (
+              <div className="col-span-2 mt-2">
+                <span className="text-sm text-muted-foreground">Discount:</span>
+                {validDiscount ? (
+                  <div className="flex items-center mt-1">
+                    <Badge className="bg-green-600">
+                      {validDiscount.discountPercentage}% off
+                    </Badge>
+                    <span className="ml-2 text-sm text-green-600">
+                      Code "{values.discountCode}" applied successfully
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center mt-1">
+                    <Badge variant="destructive">Invalid</Badge>
+                    <span className="ml-2 text-sm text-destructive">
+                      Code "{values.discountCode}" not valid for this
+                      product/date
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

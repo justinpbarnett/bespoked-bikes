@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "@/services/api";
+import { getProducts } from "@/services/product-service";
 import { Product } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import ProductForm from "@/forms/ProductForm";
@@ -36,15 +36,14 @@ export default function Products() {
     setEditingProduct(null);
   };
 
-  // Setup click handler for edit buttons
   const setupEditHandlers = () => {
     setTimeout(() => {
-      document.querySelectorAll('.edit-action').forEach(button => {
-        const productId = button.getAttribute('data-product-id');
+      document.querySelectorAll(".edit-action").forEach((button) => {
+        const productId = button.getAttribute("data-product-id");
         if (productId && products) {
-          const product = products.find(p => p.id === parseInt(productId));
+          const product = products.find((p) => p.id === parseInt(productId));
           if (product) {
-            button.addEventListener('click', () => handleEdit(product));
+            button.addEventListener("click", () => handleEdit(product));
           }
         }
       });
@@ -76,9 +75,9 @@ export default function Products() {
       )}
 
       <div className="bg-card rounded-lg shadow">
-        <DataTable 
-          columns={columns} 
-          data={products || []} 
+        <DataTable
+          columns={columns}
+          data={products || []}
           searchKey="name"
           searchPlaceholder="Filter products..."
         />

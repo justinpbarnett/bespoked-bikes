@@ -137,7 +137,7 @@ export default function Sales() {
                 </TableCell>
                 <TableCell>{`${sale.customerFirstName} ${sale.customerLastName}`}</TableCell>
                 <TableCell>{`${sale.salespersonFirstName} ${sale.salespersonLastName}`}</TableCell>
-                <TableCell>{formatDate(sale.saleDate)}</TableCell>
+                <TableCell>{formatDate(sale.salesDate)}</TableCell>
                 <TableCell>
                   ${sale.originalPrice?.toFixed(2) || sale.salePrice.toFixed(2)}
                 </TableCell>

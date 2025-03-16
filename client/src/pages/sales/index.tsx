@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getSalesFiltered } from "@/services/api";
+import { getSalesFiltered } from "@/services";
 import { Button } from "@/components/ui/button";
+import { Sale } from "@/types/index";
 import SaleForm from "@/forms/SaleForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,7 +100,7 @@ export default function Sales() {
       <div className="bg-card rounded-lg shadow">
         <DataTable 
           columns={columns} 
-          data={sales || []} 
+          data={(sales as Sale[]) || []} 
           searchKey="productName"
           searchPlaceholder="Search sales..."
         />

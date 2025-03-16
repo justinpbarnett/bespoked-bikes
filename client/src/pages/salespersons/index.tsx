@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getSalespersons } from "@/services/api";
+import { getSalespersons } from "@/services";
 import type { Salesperson } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import SalespersonForm from "@/forms/SalespersonForm";
@@ -43,7 +43,7 @@ export default function Salespersons() {
       document.querySelectorAll('.edit-action').forEach(button => {
         const salespersonId = button.getAttribute('data-salesperson-id');
         if (salespersonId && salespersons) {
-          const salesperson = salespersons.find(p => p.id === parseInt(salespersonId));
+          const salesperson = (salespersons as Salesperson[]).find(p => p.id === parseInt(salespersonId));
           if (salesperson) {
             button.addEventListener('click', () => handleEdit(salesperson));
           }
@@ -82,7 +82,7 @@ export default function Salespersons() {
       <div className="bg-card rounded-lg shadow">
         <DataTable 
           columns={columns} 
-          data={salespersons || []} 
+          data={(salespersons as Salesperson[]) || []} 
           searchKey="name"
           searchPlaceholder="Search salespersons..."
         />

@@ -3,14 +3,9 @@ using server.Models;
 
 namespace server.Features.Customers;
 
-public class GetCustomersQuery
+public class GetCustomersQuery(IRepository<Customer> repository)
 {
-    private readonly IRepository<Customer> _repository;
-
-    public GetCustomersQuery(IRepository<Customer> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Customer> _repository = repository;
 
     public async Task<IEnumerable<CustomerDto>> ExecuteAsync()
     {
@@ -27,14 +22,9 @@ public class GetCustomersQuery
     }
 }
 
-public class GetCustomerByIdQuery
+public class GetCustomerByIdQuery(IRepository<Customer> repository)
 {
-    private readonly IRepository<Customer> _repository;
-
-    public GetCustomerByIdQuery(IRepository<Customer> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Customer> _repository = repository;
 
     public async Task<CustomerDto?> ExecuteAsync(int id)
     {

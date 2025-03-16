@@ -4,17 +4,18 @@ using server.Models;
 
 namespace server.Features.Sales;
 
-public class CreateSaleCommand
+public class CreateSaleCommand(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public CreateSaleCommand(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<(bool Success, SaleResponseDto? Sale, string? ErrorMessage)> ExecuteAsync(SaleCreateDto saleDto)
     {
+        // Validate sale date is not in the future
+        if (saleDto.SalesDate > DateTime.Today)
+        {
+            return (false, null, "Sale date cannot be in the future");
+        }
+
         // Get product to calculate commission
         var product = await _context.Products.FindAsync(saleDto.ProductId);
         if (product == null)
@@ -58,7 +59,7 @@ public class CreateSaleCommand
             .Where(d => string.IsNullOrEmpty(d.DiscountCode))
             .OrderByDescending(d => d.DiscountPercentage)
             .ToListAsync();
-        
+
         var highestAutomaticDiscount = automaticDiscounts.FirstOrDefault();
 
         // Determine which discount to apply (code-based or automatic, whichever is higher)
@@ -71,7 +72,7 @@ public class CreateSaleCommand
             activeDiscount = codeBasedDiscount.DiscountPercentage >= highestAutomaticDiscount.DiscountPercentage
                 ? codeBasedDiscount
                 : highestAutomaticDiscount;
-            
+
             // Only set the applied code if we're using the code-based discount
             if (activeDiscount == codeBasedDiscount)
             {

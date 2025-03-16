@@ -5,16 +5,10 @@ using server.Models;
 
 namespace server.Features.Salespersons;
 
-public class UpdateSalespersonCommand
+public class UpdateSalespersonCommand(IRepository<Salesperson> repository, ApplicationDbContext context)
 {
-    private readonly IRepository<Salesperson> _repository;
-    private readonly ApplicationDbContext _context;
-
-    public UpdateSalespersonCommand(IRepository<Salesperson> repository, ApplicationDbContext context)
-    {
-        _repository = repository;
-        _context = context;
-    }
+    private readonly IRepository<Salesperson> _repository = repository;
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<(bool Success, string? ErrorMessage)> ExecuteAsync(int id, SalespersonDto dto)
     {
@@ -98,16 +92,10 @@ public class UpdateSalespersonCommand
     }
 }
 
-public class CreateSalespersonCommand
+public class CreateSalespersonCommand(IRepository<Salesperson> repository, ApplicationDbContext context)
 {
-    private readonly IRepository<Salesperson> _repository;
-    private readonly ApplicationDbContext _context;
-
-    public CreateSalespersonCommand(IRepository<Salesperson> repository, ApplicationDbContext context)
-    {
-        _repository = repository;
-        _context = context;
-    }
+    private readonly IRepository<Salesperson> _repository = repository;
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<(bool Success, SalespersonDto? Salesperson, string? ErrorMessage)> ExecuteAsync(CreateSalespersonDto dto)
     {

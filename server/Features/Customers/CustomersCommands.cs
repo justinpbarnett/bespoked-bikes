@@ -3,14 +3,9 @@ using server.Models;
 
 namespace server.Features.Customers;
 
-public class CreateCustomerCommand
+public class CreateCustomerCommand(IRepository<Customer> repository)
 {
-    private readonly IRepository<Customer> _repository;
-
-    public CreateCustomerCommand(IRepository<Customer> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Customer> _repository = repository;
 
     public async Task<CustomerDto> ExecuteAsync(CreateCustomerDto dto)
     {

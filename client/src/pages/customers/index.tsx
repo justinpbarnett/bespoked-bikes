@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCustomers } from "@/services/api";
+import { getCustomers } from "@/services";
 import { Button } from "@/components/ui/button";
+import { Customer } from "@/types/index";
 import CustomerForm from "@/forms/CustomerForm";
 import { Plus } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
@@ -50,7 +51,7 @@ export default function Customers() {
       <div className="bg-card rounded-lg shadow">
         <DataTable 
           columns={columns} 
-          data={customers || []} 
+          data={(customers as Customer[]) || []} 
           searchKey="name"
           searchPlaceholder="Search customers..."
         />

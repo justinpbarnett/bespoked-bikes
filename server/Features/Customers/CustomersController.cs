@@ -4,21 +4,14 @@ namespace server.Features.Customers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CustomersController : ControllerBase
+public class CustomersController(
+    GetCustomersQuery getCustomersQuery,
+    GetCustomerByIdQuery getCustomerByIdQuery,
+    CreateCustomerCommand createCustomerCommand) : ControllerBase
 {
-    private readonly GetCustomersQuery _getCustomersQuery;
-    private readonly GetCustomerByIdQuery _getCustomerByIdQuery;
-    private readonly CreateCustomerCommand _createCustomerCommand;
-
-    public CustomersController(
-        GetCustomersQuery getCustomersQuery,
-        GetCustomerByIdQuery getCustomerByIdQuery,
-        CreateCustomerCommand createCustomerCommand)
-    {
-        _getCustomersQuery = getCustomersQuery;
-        _getCustomerByIdQuery = getCustomerByIdQuery;
-        _createCustomerCommand = createCustomerCommand;
-    }
+    private readonly GetCustomersQuery _getCustomersQuery = getCustomersQuery;
+    private readonly GetCustomerByIdQuery _getCustomerByIdQuery = getCustomerByIdQuery;
+    private readonly CreateCustomerCommand _createCustomerCommand = createCustomerCommand;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()

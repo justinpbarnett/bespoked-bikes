@@ -16,23 +16,13 @@ public static class ServiceCollectionExtensions
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
-        // Add MVC controllers
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
-        // Configure Swagger
         AddSwagger(builder);
-
-        // Configure Database
         AddDatabase(builder);
-
-        // Register repositories and services
         AddApplicationServices(builder);
-
-        // Configure CORS
         AddCors(builder);
-
-        // Configure Caching and Compression
         AddCachingAndCompression(builder);
 
         return builder;
@@ -40,7 +30,6 @@ public static class ServiceCollectionExtensions
 
     private static void AddApplicationServices(WebApplicationBuilder builder)
     {
-        // Register repositories
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         // Product services
@@ -82,7 +71,7 @@ public static class ServiceCollectionExtensions
         builder.Services.AddScoped<GetTopSalespersonsQuery>();
         builder.Services.AddScoped<GetInventoryAlertsQuery>();
         builder.Services.AddScoped<GetProductPerformanceQuery>();
-        
+
         // Reports services
         builder.Services.AddScoped<GetCommissionReportQuery>();
     }

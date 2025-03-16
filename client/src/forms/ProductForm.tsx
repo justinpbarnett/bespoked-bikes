@@ -50,20 +50,14 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
     onError: (err: any) => {
       console.error("Update error:", err);
 
-      // Check if we have a detailed error message from the server
       if (err.response?.data) {
-        // If it's a string, use it directly
         if (typeof err.response.data === "string") {
           setError(err.response.data);
-        }
-        // If it's an object with a detail or message property
-        else if (err.response.data.detail) {
+        } else if (err.response.data.detail) {
           setError(err.response.data.detail);
         } else if (err.response.data.message) {
           setError(err.response.data.message);
-        }
-        // If it's a title from the problem details
-        else if (err.response.data.title) {
+        } else if (err.response.data.title) {
           setError(
             `${err.response.data.title}: ${
               err.response.data.detail || "Please check your input."
@@ -91,7 +85,6 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
     e.preventDefault();
     setError(null);
 
-    // Validate form
     if (
       !formData.name ||
       !formData.manufacturer ||
@@ -108,7 +101,6 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
       return;
     }
 
-    // Create a clean copy of the form data for submission
     const submissionData = { ...formData };
 
     if (isEditing && product) {

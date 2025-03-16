@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getDiscounts } from "@/services/api";
+import { getDiscounts } from "@/services/discount-service";
 import { Button } from "@/components/ui/button";
 import { Plus, Percent } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
@@ -12,7 +12,6 @@ export default function Discounts() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null);
 
-  // Fetch all discounts
   const { data: discounts = [], isLoading } = useQuery({
     queryKey: ["discounts"],
     queryFn: getDiscounts,
@@ -58,9 +57,9 @@ export default function Discounts() {
             </p>
           </div>
         ) : (
-          <DataTable 
-            columns={columns} 
-            data={discounts || []} 
+          <DataTable
+            columns={columns}
+            data={discounts || []}
             searchKey="discountPercentage"
             searchPlaceholder="Search discounts..."
           />

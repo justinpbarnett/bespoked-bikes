@@ -26,13 +26,11 @@ export default function DiscountForm({ discount, onClose }: DiscountFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!discount;
 
-  // Fetch products for the select dropdown
   const { data: products = [] } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
   });
 
-  // Initialize form state
   const [formData, setFormData] = useState<DiscountCreate>({
     productId: discount?.product?.id,
     beginDate: discount?.beginDate
@@ -54,7 +52,6 @@ export default function DiscountForm({ discount, onClose }: DiscountFormProps) {
   );
   const [error, setError] = useState<string | null>(null);
 
-  // Create discount mutation
   const createDiscountMutation = useMutation({
     mutationFn: createDiscount,
     onSuccess: () => {
@@ -73,7 +70,6 @@ export default function DiscountForm({ discount, onClose }: DiscountFormProps) {
     e.preventDefault();
     setError(null);
 
-    // Validate form
     if (
       (!formData.isGlobal && !formData.productId) ||
       !formData.beginDate ||
@@ -87,13 +83,11 @@ export default function DiscountForm({ discount, onClose }: DiscountFormProps) {
       return;
     }
 
-    // Validate dates
     if (new Date(formData.beginDate) >= new Date(formData.endDate)) {
       setError("Begin date must be before end date.");
       return;
     }
 
-    // Validate discount code if required
     if (requiresCode && !formData.discountCode) {
       setError(
         "Discount code is required when 'Require Discount Code' is enabled."
@@ -101,10 +95,8 @@ export default function DiscountForm({ discount, onClose }: DiscountFormProps) {
       return;
     }
 
-    // Prepare data for submission
     const submissionData = { ...formData };
 
-    // Only include discount code if it's required
     if (!requiresCode) {
       delete submissionData.discountCode;
     }

@@ -3,14 +3,9 @@ using server.Infrastructure.Data;
 
 namespace server.Features.Discounts;
 
-public class GetDiscountsQuery
+public class GetDiscountsQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetDiscountsQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<IEnumerable<DiscountDto>> ExecuteAsync()
     {
@@ -33,14 +28,9 @@ public class GetDiscountsQuery
     }
 }
 
-public class GetDiscountByIdQuery
+public class GetDiscountByIdQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetDiscountByIdQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<DiscountDto?> ExecuteAsync(int id)
     {
@@ -63,14 +53,9 @@ public class GetDiscountByIdQuery
     }
 }
 
-public class GetActiveDiscountsForProductQuery
+public class GetActiveDiscountsForProductQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetActiveDiscountsForProductQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<IEnumerable<DiscountDto>> ExecuteAsync(int productId, DateTime date)
     {
@@ -95,14 +80,9 @@ public class GetActiveDiscountsForProductQuery
     }
 }
 
-public class GetGlobalDiscountsQuery
+public class GetGlobalDiscountsQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetGlobalDiscountsQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<IEnumerable<DiscountDto>> ExecuteAsync(DateTime? date = null)
     {

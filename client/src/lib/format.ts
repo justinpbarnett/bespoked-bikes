@@ -6,8 +6,8 @@
  * @returns Formatted currency string
  */
 export function formatCurrency(
-  amount: number, 
-  locale = "en-US", 
+  amount: number,
+  locale = "en-US",
   currency = "USD"
 ): string {
   return new Intl.NumberFormat(locale, {
@@ -22,10 +22,7 @@ export function formatCurrency(
  * @param locale - The locale to use (defaults to en-US)
  * @returns Formatted date string
  */
-export function formatDate(
-  date: string | Date, 
-  locale = "en-US"
-): string {
+export function formatDate(date: string | Date, locale = "en-US"): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   return new Intl.DateTimeFormat(locale, {
     year: "numeric",
@@ -40,10 +37,7 @@ export function formatDate(
  * @param decimalPlaces - Number of decimal places to show
  * @returns Formatted percentage string
  */
-export function formatPercentage(
-  value: number,
-  decimalPlaces = 1
-): string {
+export function formatPercentage(value: number, decimalPlaces = 1): string {
   return `${value.toFixed(decimalPlaces)}%`;
 }
 
@@ -55,12 +49,14 @@ export function formatPercentage(
 export function formatPhone(phone: string): string {
   // Remove all non-numeric characters
   const cleaned = phone.replace(/\D/g, "");
-  
+
   // Format as (XXX) XXX-XXXX if it's a 10-digit number
   if (cleaned.length === 10) {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(
+      6
+    )}`;
   }
-  
+
   // Otherwise return the original value
   return phone;
 }

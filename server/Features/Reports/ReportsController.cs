@@ -4,14 +4,9 @@ namespace server.Features.Reports;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReportsController : ControllerBase
+public class ReportsController(GetCommissionReportQuery getCommissionReportQuery) : ControllerBase
 {
-    private readonly GetCommissionReportQuery _getCommissionReportQuery;
-
-    public ReportsController(GetCommissionReportQuery getCommissionReportQuery)
-    {
-        _getCommissionReportQuery = getCommissionReportQuery;
-    }
+    private readonly GetCommissionReportQuery _getCommissionReportQuery = getCommissionReportQuery;
 
     [HttpGet("commission")]
     public async Task<ActionResult<CommissionReportDto>> GetCommissionReport([FromQuery] int year, [FromQuery] int quarter)

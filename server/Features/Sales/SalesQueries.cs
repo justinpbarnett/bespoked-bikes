@@ -3,14 +3,9 @@ using server.Infrastructure.Data;
 
 namespace server.Features.Sales;
 
-public class GetSaleDetailsQuery
+public class GetSaleDetailsQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetSaleDetailsQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<SaleDetailsDto?> ExecuteAsync(int id)
     {
@@ -65,14 +60,9 @@ public class GetSaleDetailsQuery
     }
 }
 
-public class GetSalesQuery
+public class GetSalesQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetSalesQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<IEnumerable<SaleResponseDto>> ExecuteAsync()
     {
@@ -124,14 +114,9 @@ public class GetSalesQuery
     }
 }
 
-public class FilterSalesQuery
+public class FilterSalesQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public FilterSalesQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<IEnumerable<SaleResponseDto>> ExecuteAsync(DateTime? startDate, DateTime? endDate)
     {

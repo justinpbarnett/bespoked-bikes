@@ -18,15 +18,16 @@ export function useForm<T extends Record<string, any>>({
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    
+
     setValues((prev) => ({
       ...prev,
       [name]: type === "number" ? (value === "" ? "" : Number(value)) : value,
     }));
 
-    // Mark field as touched
     if (!touched[name]) {
       setTouched((prev) => ({
         ...prev,
@@ -34,7 +35,6 @@ export function useForm<T extends Record<string, any>>({
       }));
     }
 
-    // Clear error when value changes
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -43,16 +43,18 @@ export function useForm<T extends Record<string, any>>({
     }
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleBlur = (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name } = e.target;
-    
-    // Mark field as touched
+
     setTouched((prev) => ({
       ...prev,
       [name]: true,
     }));
 
-    // Validate single field
     if (validate) {
       const validationErrors = validate(values);
       if (validationErrors[name]) {
@@ -66,28 +68,24 @@ export function useForm<T extends Record<string, any>>({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
-    // Validate all fields
+
     if (validate) {
       const validationErrors = validate(values);
       setErrors(validationErrors);
-      
-      // Mark all fields as touched
+
       const allTouched = Object.keys(values).reduce(
         (acc, key) => ({ ...acc, [key]: true }),
         {}
       );
       setTouched(allTouched);
 
-      // Don't submit if there are errors
       if (Object.keys(validationErrors).length > 0) {
         return;
       }
     }
 
     setIsSubmitting(true);
-    
-    // Call onSubmit callback
+
     try {
       onSubmit(values);
     } catch (error) {

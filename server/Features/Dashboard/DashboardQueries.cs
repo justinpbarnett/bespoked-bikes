@@ -3,14 +3,9 @@ using server.Infrastructure.Data;
 
 namespace server.Features.Dashboard;
 
-public class GetDashboardSummaryQuery
+public class GetDashboardSummaryQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetDashboardSummaryQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<DashboardSummaryDto> ExecuteAsync()
     {
@@ -79,14 +74,9 @@ public class GetDashboardSummaryQuery
     }
 }
 
-public class GetTopSalespersonsQuery
+public class GetTopSalespersonsQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetTopSalespersonsQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<List<TopSalespersonDto>> ExecuteAsync(int count)
     {
@@ -131,14 +121,9 @@ public class GetTopSalespersonsQuery
     }
 }
 
-public class GetRecentSalesQuery
+public class GetRecentSalesQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetRecentSalesQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<List<RecentSaleDto>> ExecuteAsync(int count)
     {
@@ -169,14 +154,9 @@ public class GetRecentSalesQuery
     }
 }
 
-public class GetProductPerformanceQuery
+public class GetProductPerformanceQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetProductPerformanceQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<List<ProductPerformanceDto>> ExecuteAsync()
     {
@@ -221,14 +201,9 @@ public class GetProductPerformanceQuery
     }
 }
 
-public class GetMonthlySalesQuery
+public class GetMonthlySalesQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetMonthlySalesQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<MonthlySalesDto> ExecuteAsync(string year)
     {
@@ -341,14 +316,9 @@ public class GetMonthlySalesQuery
     }
 }
 
-public class GetInventoryAlertsQuery
+public class GetInventoryAlertsQuery(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetInventoryAlertsQuery(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<InventoryAlertDto> ExecuteAsync()
     {

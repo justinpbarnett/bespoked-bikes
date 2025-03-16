@@ -4,19 +4,14 @@ using server.Models;
 
 namespace server.Features.Discounts;
 
-public class CreateDiscountCommand
+public class CreateDiscountCommand(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public CreateDiscountCommand(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<DiscountResponseDto> ExecuteAsync(DiscountCreateDto discountDto)
     {
         Product? product = null;
-        
+
         // Check if it's a product-specific discount
         if (!discountDto.IsGlobal && discountDto.ProductId.HasValue)
         {
@@ -32,13 +27,13 @@ public class CreateDiscountCommand
             // Can't have both IsGlobal=true and a ProductId
             return new DiscountResponseDto(false, "Global discounts cannot have a specific product");
         }
-        
+
         // Validate discount percentage
         if (discountDto.DiscountPercentage < 0 || discountDto.DiscountPercentage > 100)
         {
             return new DiscountResponseDto(false, "Discount percentage must be between 0 and 100");
         }
-        
+
         // Validate dates
         if (discountDto.BeginDate >= discountDto.EndDate)
         {
@@ -80,14 +75,9 @@ public class CreateDiscountCommand
     }
 }
 
-public class UpdateDiscountCommand
+public class UpdateDiscountCommand(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public UpdateDiscountCommand(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<DiscountResponseDto> ExecuteAsync(int id, DiscountUpdateDto discountDto)
     {
@@ -97,9 +87,9 @@ public class UpdateDiscountCommand
         {
             return new DiscountResponseDto(false, "Discount not found");
         }
-        
+
         Product? product = null;
-        
+
         // Check if it's a product-specific discount
         if (!discountDto.IsGlobal && discountDto.ProductId.HasValue)
         {
@@ -115,13 +105,13 @@ public class UpdateDiscountCommand
             // Can't have both IsGlobal=true and a ProductId
             return new DiscountResponseDto(false, "Global discounts cannot have a specific product");
         }
-        
+
         // Validate discount percentage
         if (discountDto.DiscountPercentage < 0 || discountDto.DiscountPercentage > 100)
         {
             return new DiscountResponseDto(false, "Discount percentage must be between 0 and 100");
         }
-        
+
         // Validate dates
         if (discountDto.BeginDate >= discountDto.EndDate)
         {
@@ -159,14 +149,9 @@ public class UpdateDiscountCommand
     }
 }
 
-public class DeleteDiscountCommand
+public class DeleteDiscountCommand(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public DeleteDiscountCommand(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<DiscountResponseDto> ExecuteAsync(int id)
     {

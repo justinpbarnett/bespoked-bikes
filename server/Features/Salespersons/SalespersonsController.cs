@@ -4,24 +4,16 @@ namespace server.Features.Salespersons;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SalespersonsController : ControllerBase
+public class SalespersonsController(
+    GetSalespersonsQuery getSalespersonsQuery,
+    GetSalespersonByIdQuery getSalespersonByIdQuery,
+    CreateSalespersonCommand createSalespersonCommand,
+    UpdateSalespersonCommand updateSalespersonCommand) : ControllerBase
 {
-    private readonly GetSalespersonsQuery _getSalespersonsQuery;
-    private readonly GetSalespersonByIdQuery _getSalespersonByIdQuery;
-    private readonly CreateSalespersonCommand _createSalespersonCommand;
-    private readonly UpdateSalespersonCommand _updateSalespersonCommand;
-
-    public SalespersonsController(
-        GetSalespersonsQuery getSalespersonsQuery,
-        GetSalespersonByIdQuery getSalespersonByIdQuery,
-        CreateSalespersonCommand createSalespersonCommand,
-        UpdateSalespersonCommand updateSalespersonCommand)
-    {
-        _getSalespersonsQuery = getSalespersonsQuery;
-        _getSalespersonByIdQuery = getSalespersonByIdQuery;
-        _createSalespersonCommand = createSalespersonCommand;
-        _updateSalespersonCommand = updateSalespersonCommand;
-    }
+    private readonly GetSalespersonsQuery _getSalespersonsQuery = getSalespersonsQuery;
+    private readonly GetSalespersonByIdQuery _getSalespersonByIdQuery = getSalespersonByIdQuery;
+    private readonly CreateSalespersonCommand _createSalespersonCommand = createSalespersonCommand;
+    private readonly UpdateSalespersonCommand _updateSalespersonCommand = updateSalespersonCommand;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SalespersonDto>>> GetSalespersons()

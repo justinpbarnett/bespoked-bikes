@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createSalesperson, updateSalesperson } from "../services/api";
+import {
+  createSalesperson,
+  updateSalesperson,
+} from "../services/salesperson-service";
 import { Salesperson, SalespersonSubmit } from "../types/index";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -57,20 +60,14 @@ export default function SalespersonForm({
     onError: (err: any) => {
       console.error("Update error:", err);
 
-      // Check if we have a detailed error message from the server
       if (err.response?.data) {
-        // If it's a string, use it directly
         if (typeof err.response.data === "string") {
           setError(err.response.data);
-        }
-        // If it's an object with a detail or message property
-        else if (err.response.data.detail) {
+        } else if (err.response.data.detail) {
           setError(err.response.data.detail);
         } else if (err.response.data.message) {
           setError(err.response.data.message);
-        }
-        // If it's a title from the problem details
-        else if (err.response.data.title) {
+        } else if (err.response.data.title) {
           setError(
             `${err.response.data.title}: ${
               err.response.data.detail || "Please check your input."
@@ -87,6 +84,12 @@ export default function SalespersonForm({
     },
   });
 
+  const validatePhoneNumber = (phone: string): boolean => {
+    // Regex for US phone format: (123) 456-7890 or 123-456-7890 or 1234567890
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -100,7 +103,6 @@ export default function SalespersonForm({
     e.preventDefault();
     setError(null);
 
-    // Validate form
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -113,8 +115,12 @@ export default function SalespersonForm({
       );
       return;
     }
+    
+    if (!validatePhoneNumber(formData.phone)) {
+      setError("Please enter a valid phone number (e.g., (123) 456-7890, 123-456-7890, or 1234567890)");
+      return;
+    }
 
-    // Validate dates
     if (
       formData.terminationDate &&
       new Date(formData.terminationDate) < new Date(formData.startDate)
@@ -123,19 +129,15 @@ export default function SalespersonForm({
       return;
     }
 
-    // Create a copy of the form data and prepare for submission
     const submissionData = { ...formData };
 
-    // Properly handle terminationDate for the API
-    // Convert empty string to null
     if (
       !submissionData.terminationDate ||
       submissionData.terminationDate === ""
     ) {
-      submissionData.terminationDate = null as any; // using 'any' to bypass TypeScript type checking
+      submissionData.terminationDate = null as any;
     }
 
-    // Trim whitespace from all string fields to prevent accidental spaces
     Object.keys(submissionData).forEach((key) => {
       const value = submissionData[key as keyof typeof submissionData];
       if (typeof value === "string") {

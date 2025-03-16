@@ -30,12 +30,7 @@ export default function InventoryAlertsList({
         <>
           {/* Out of stock products */}
           {inventoryAlerts?.outOfStock?.map(
-            (product: {
-              id: number;
-              name: string;
-              quantityOnHand: number;
-              reorderPoint: number;
-            }) => (
+            (product: { id: number; name: string; quantityOnHand: number }) => (
               <div key={product.id} className="flex items-center">
                 <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">
@@ -43,7 +38,6 @@ export default function InventoryAlertsList({
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {product.quantityOnHand} units remaining
-                    (Reorder point: {product.reorderPoint})
                   </p>
                 </div>
                 <Badge variant="destructive" className="ml-auto">
@@ -56,17 +50,14 @@ export default function InventoryAlertsList({
           {/* Low stock products, sorted by quantity (lowest first) */}
           {inventoryAlerts?.lowStock
             ?.sort(
-              (
-                a: { quantityOnHand: number },
-                b: { quantityOnHand: number }
-              ) => a.quantityOnHand - b.quantityOnHand
+              (a: { quantityOnHand: number }, b: { quantityOnHand: number }) =>
+                a.quantityOnHand - b.quantityOnHand
             )
             .map(
               (product: {
                 id: number;
                 name: string;
                 quantityOnHand: number;
-                reorderPoint: number;
               }) => (
                 <div key={product.id} className="flex items-center">
                   <div className="space-y-1">
@@ -75,7 +66,6 @@ export default function InventoryAlertsList({
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {product.quantityOnHand} units remaining
-                      (Reorder point: {product.reorderPoint})
                     </p>
                   </div>
                   <Badge variant="outline" className="ml-auto">

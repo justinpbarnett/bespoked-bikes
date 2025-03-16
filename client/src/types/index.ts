@@ -39,7 +39,7 @@ export interface Sale {
   productId: number;
   customerId: number;
   salespersonId: number;
-  saleDate: string;
+  salesDate: string; // Changed from saleDate to salesDate to match backend
   salePrice: number;
   commissionPercentage: number;
   commissionAmount: number;
@@ -70,7 +70,10 @@ export interface Discount {
 }
 
 export interface DetailedSale {
-  saleDate: string;
+  saleId: number; // Added to match backend DetailedSaleDto
+  productId: number; // Added to match backend DetailedSaleDto
+  customerId: number; // Added to match backend DetailedSaleDto
+  salesDate: string; // Changed from saleDate to salesDate to match backend
   productName: string;
   customerName: string;
   salePrice: number;
@@ -172,7 +175,7 @@ export interface RecentSale {
   id: number;
   product: string;
   customer: string;
-  salesperson: string;
+  salespersonName: string;
   salesDate: string;
   salePrice: number;
   commissionAmount: number;
@@ -203,13 +206,11 @@ export interface InventoryAlert {
     id: number;
     name: string;
     quantityOnHand: number;
-    reorderPoint: number;
   }>;
   lowStock: Array<{
     id: number;
     name: string;
     quantityOnHand: number;
-    reorderPoint: number;
   }>;
 }
 
@@ -266,8 +267,9 @@ export interface SaleCreate {
   productId: number;
   customerId: number;
   salespersonId: number;
-  saleDate: string;
+  salesDate: string; // Changed from saleDate to salesDate to match backend
   salePrice: number;
+  discountCode?: string;
 }
 
 export interface DiscountCreate {

@@ -27,13 +27,13 @@ export function FormField({
         <span>{label}</span>
         {required && <span className="text-red-500">*</span>}
       </Label>
-      
+
       {description && (
         <p className="text-xs text-muted-foreground">{description}</p>
       )}
-      
+
       {children}
-      
+
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -50,8 +50,8 @@ interface InputFieldProps {
   required?: boolean;
   className?: string;
   description?: string;
-  min?: number;
-  max?: number;
+  min?: string | number;
+  max?: string | number;
   step?: number;
   disabled?: boolean;
 }
@@ -73,10 +73,10 @@ export function InputField({
   disabled = false,
 }: InputFieldProps) {
   return (
-    <FormField 
-      id={id} 
-      label={label} 
-      error={error} 
+    <FormField
+      id={id}
+      label={label}
+      error={error}
       className={className}
       required={required}
       description={description}
@@ -126,10 +126,10 @@ export function SelectField({
   disabled = false,
 }: SelectFieldProps) {
   return (
-    <FormField 
-      id={id} 
-      label={label} 
-      error={error} 
+    <FormField
+      id={id}
+      label={label}
+      error={error}
       className={className}
       required={required}
       description={description}

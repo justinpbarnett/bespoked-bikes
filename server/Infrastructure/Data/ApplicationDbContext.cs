@@ -4,12 +4,8 @@ using server.Infrastructure.Data.SeedData;
 
 namespace server.Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
 
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Salesperson> Salespersons => Set<Salesperson>();

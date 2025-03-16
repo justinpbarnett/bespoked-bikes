@@ -4,24 +4,16 @@ namespace server.Features.Sales;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SalesController : ControllerBase
+public class SalesController(
+    GetSalesQuery getSalesQuery,
+    GetSaleDetailsQuery getSaleDetailsQuery,
+    FilterSalesQuery filterSalesQuery,
+    CreateSaleCommand createSaleCommand) : ControllerBase
 {
-    private readonly GetSalesQuery _getSalesQuery;
-    private readonly GetSaleDetailsQuery _getSaleDetailsQuery;
-    private readonly FilterSalesQuery _filterSalesQuery;
-    private readonly CreateSaleCommand _createSaleCommand;
-
-    public SalesController(
-        GetSalesQuery getSalesQuery,
-        GetSaleDetailsQuery getSaleDetailsQuery,
-        FilterSalesQuery filterSalesQuery,
-        CreateSaleCommand createSaleCommand)
-    {
-        _getSalesQuery = getSalesQuery;
-        _getSaleDetailsQuery = getSaleDetailsQuery;
-        _filterSalesQuery = filterSalesQuery;
-        _createSaleCommand = createSaleCommand;
-    }
+    private readonly GetSalesQuery _getSalesQuery = getSalesQuery;
+    private readonly GetSaleDetailsQuery _getSaleDetailsQuery = getSaleDetailsQuery;
+    private readonly FilterSalesQuery _filterSalesQuery = filterSalesQuery;
+    private readonly CreateSaleCommand _createSaleCommand = createSaleCommand;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SaleResponseDto>>> GetSales()
@@ -29,17 +21,17 @@ public class SalesController : ControllerBase
         var sales = await _getSalesQuery.ExecuteAsync();
         return Ok(sales);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<SaleDetailsDto>> GetSaleDetails(int id)
     {
         var sale = await _getSaleDetailsQuery.ExecuteAsync(id);
-        
+
         if (sale == null)
         {
             return NotFound();
         }
-        
+
         return sale;
     }
 

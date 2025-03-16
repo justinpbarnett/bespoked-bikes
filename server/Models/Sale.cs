@@ -35,7 +35,6 @@ public class Sale
     [Range(0, double.MaxValue)]
     public decimal OriginalPrice { get; set; }
 
-    // Store the discount code that was applied (if any)
     public string? AppliedDiscountCode { get; set; }
 
     [ForeignKey("ProductId")]

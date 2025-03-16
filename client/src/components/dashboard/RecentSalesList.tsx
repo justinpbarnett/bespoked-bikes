@@ -36,7 +36,7 @@ export default function RecentSalesList({
                 {sale.product}
               </div>
               <div className="text-sm text-muted-foreground">
-                {sale.salesperson} • {sale.customer}
+                {sale.salespersonName} • {sale.customer}
               </div>
             </div>
             <div className="ml-auto font-medium">

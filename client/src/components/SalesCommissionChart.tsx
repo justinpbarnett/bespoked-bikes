@@ -131,29 +131,18 @@ export function SalesCommissionChart({
 }: SalesCommissionChartProps) {
   const [timeRange, setTimeRange] = React.useState("12m"); // Default to last 12 months view
 
-  // Filter data based on time range if needed
   const filteredData = React.useMemo(() => {
     if (!timeRangeSelector) return data;
 
-    // Show all available data when "all" is selected
     if (timeRange === "all") {
-      // Use all-time data which includes all months from all years
       return allTimeData && allTimeData.length > 0 ? allTimeData : data;
     }
 
-    // For the 3-month and 12-month views, we'll use the data from the server
     if ((timeRange === "3m" || timeRange === "12m") && data) {
-      // The server already sends the full 12 months in chronological order
-      // with current month as the last element (rightmost in chart)
-
-      // For "Last 3 months", show only the most recent 3 months
-      // This means the last 3 elements in the array (including current month)
       if (timeRange === "3m") {
         return data.slice(-3);
       }
 
-      // For "Last 12 months", use the full 12-month dataset
-      // This shows current month as the rightmost point in the chart
       return data;
     }
 

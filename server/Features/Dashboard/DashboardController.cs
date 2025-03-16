@@ -6,30 +6,20 @@ namespace server.Features.Dashboard;
 [ApiController]
 [Route("api/[controller]")]
 [EnableCors("AllowReactApp")]
-public class DashboardController : ControllerBase
+public class DashboardController(
+    GetDashboardSummaryQuery getDashboardSummaryQuery,
+    GetRecentSalesQuery getRecentSalesQuery,
+    GetMonthlySalesQuery getMonthlySalesQuery,
+    GetTopSalespersonsQuery getTopSalespersonsQuery,
+    GetInventoryAlertsQuery getInventoryAlertsQuery,
+    GetProductPerformanceQuery getProductPerformanceQuery) : ControllerBase
 {
-    private readonly GetDashboardSummaryQuery _getDashboardSummaryQuery;
-    private readonly GetRecentSalesQuery _getRecentSalesQuery;
-    private readonly GetMonthlySalesQuery _getMonthlySalesQuery;
-    private readonly GetTopSalespersonsQuery _getTopSalespersonsQuery;
-    private readonly GetInventoryAlertsQuery _getInventoryAlertsQuery;
-    private readonly GetProductPerformanceQuery _getProductPerformanceQuery;
-
-    public DashboardController(
-        GetDashboardSummaryQuery getDashboardSummaryQuery,
-        GetRecentSalesQuery getRecentSalesQuery,
-        GetMonthlySalesQuery getMonthlySalesQuery,
-        GetTopSalespersonsQuery getTopSalespersonsQuery,
-        GetInventoryAlertsQuery getInventoryAlertsQuery,
-        GetProductPerformanceQuery getProductPerformanceQuery)
-    {
-        _getDashboardSummaryQuery = getDashboardSummaryQuery;
-        _getRecentSalesQuery = getRecentSalesQuery;
-        _getMonthlySalesQuery = getMonthlySalesQuery;
-        _getTopSalespersonsQuery = getTopSalespersonsQuery;
-        _getInventoryAlertsQuery = getInventoryAlertsQuery;
-        _getProductPerformanceQuery = getProductPerformanceQuery;
-    }
+    private readonly GetDashboardSummaryQuery _getDashboardSummaryQuery = getDashboardSummaryQuery;
+    private readonly GetRecentSalesQuery _getRecentSalesQuery = getRecentSalesQuery;
+    private readonly GetMonthlySalesQuery _getMonthlySalesQuery = getMonthlySalesQuery;
+    private readonly GetTopSalespersonsQuery _getTopSalespersonsQuery = getTopSalespersonsQuery;
+    private readonly GetInventoryAlertsQuery _getInventoryAlertsQuery = getInventoryAlertsQuery;
+    private readonly GetProductPerformanceQuery _getProductPerformanceQuery = getProductPerformanceQuery;
 
     [HttpGet("summary")]
     public async Task<ActionResult<DashboardSummaryDto>> GetDashboardSummary()

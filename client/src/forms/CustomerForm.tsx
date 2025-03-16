@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createCustomer } from "../services/api";
+import { createCustomer } from "../services/customer-service";
 import { CustomerCreate } from "../types/index";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -35,6 +35,12 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
     },
   });
 
+  const validatePhoneNumber = (phone: string): boolean => {
+    // Regex for US phone format: (123) 456-7890 or 123-456-7890 or 1234567890
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -48,7 +54,6 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
     e.preventDefault();
     setError(null);
 
-    // Validate form
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -59,6 +64,11 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
       setError(
         "Please fill out all required fields: First Name, Last Name, Address, Phone, and Start Date."
       );
+      return;
+    }
+    
+    if (!validatePhoneNumber(formData.phone)) {
+      setError("Please enter a valid phone number (e.g., (123) 456-7890, 123-456-7890, or 1234567890)");
       return;
     }
 

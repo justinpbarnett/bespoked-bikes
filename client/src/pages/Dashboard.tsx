@@ -1,10 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, PlusCircle } from "lucide-react";
+import {
+  BarChart3,
+  PlusCircle,
+  ShoppingCart,
+  AlertTriangle,
+  Users,
+  DollarSign,
+} from "lucide-react";
 import { SalesCommissionChart } from "@/components/SalesCommissionChart";
 import { SalesCommissionChartSkeleton } from "@/components/SalesCommissionChartSkeleton";
 import SaleForm from "@/forms/SaleForm";
@@ -15,24 +29,22 @@ import {
   getDashboardSummary,
   getRecentSales,
   getMonthlySalesData,
-  getTopSalespersons,
-  getProductPerformance,
   getInventoryAlerts,
 } from "@/services";
+import InventoryAlertsList from "@/components/dashboard/InventoryAlertsList";
+import MetricsGrid from "@/components/dashboard/MetricsGrid";
+import RecentSalesList from "@/components/dashboard/RecentSalesList";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  // State for sale form visibility
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Form handlers
   const handleAddSale = () => setIsFormOpen(true);
   const handleCloseForm = () => setIsFormOpen(false);
 
-  // Get current date info for data filtering
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
 
-  // Fetch dashboard data
   const { data: summaryData, isLoading: isSummaryLoading } = useQuery({
     queryKey: ["dashboardSummary"],
     queryFn: getDashboardSummary,
@@ -42,26 +54,28 @@ export default function Dashboard() {
   const { data: recentSales, isLoading: isRecentSalesLoading } = useQuery({
     queryKey: ["recentSales"],
     queryFn: () => getRecentSales(5),
-    staleTime: 5 * 1000, // 5 seconds - more frequent updates for recent sales
-    refetchOnWindowFocus: true, // Refetch when window regains focus
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds while window is open
+    staleTime: 5 * 1000,
+    refetchOnWindowFocus: true,
+    refetchInterval: 30 * 1000,
   });
 
-  // Fetch sales data for charts
-  const { data: rollingYearSalesData, isLoading: isRollingYearSalesLoading } = useQuery({
-    queryKey: ["monthlySales", currentYear],
-    queryFn: () => getMonthlySalesData(currentYear),
-    staleTime: 1000 * 60 * 10, // 10 minutes
-  });
+  const { data: rollingYearSalesData, isLoading: isRollingYearSalesLoading } =
+    useQuery({
+      queryKey: ["monthlySales", currentYear],
+      queryFn: () => getMonthlySalesData(currentYear),
+      staleTime: 1000 * 60 * 10, // 10 minutes
+    });
 
-  const { data: allTimeSalesData, isLoading: isAllTimeSalesLoading } = useQuery({
-    queryKey: ["monthlySales", "all"],
-    queryFn: () => getMonthlySalesData("all"),
-    staleTime: 1000 * 60 * 10, // 10 minutes
-  });
+  const { data: allTimeSalesData, isLoading: isAllTimeSalesLoading } = useQuery(
+    {
+      queryKey: ["monthlySales", "all"],
+      queryFn: () => getMonthlySalesData("all"),
+      staleTime: 1000 * 60 * 10, // 10 minutes
+    }
+  );
 
-  // Combine and prepare chart data
-  const isMonthlySalesLoading = isRollingYearSalesLoading || isAllTimeSalesLoading;
+  const isMonthlySalesLoading =
+    isRollingYearSalesLoading || isAllTimeSalesLoading;
 
   const monthlySalesData = React.useMemo(() => {
     if (!rollingYearSalesData?.data || !allTimeSalesData?.data) return null;
@@ -82,29 +96,16 @@ export default function Dashboard() {
     };
   }, [rollingYearSalesData, allTimeSalesData, currentYear]);
 
-  // Fetch other dashboard data
-  // Commenting out unused queries for now, but they'll be needed for other tabs
-  // const { data: topSalespersons, isLoading: isTopSalespersonsLoading } = useQuery({
-  //   queryKey: ["topSalespersons"],
-  //   queryFn: () => getTopSalespersons(3),
-  //   staleTime: 1000 * 60 * 5, // 5 minutes
-  // });
-
-  const { data: inventoryAlerts, isLoading: isInventoryAlertsLoading } = useQuery({
-    queryKey: ["inventoryAlerts"],
-    queryFn: getInventoryAlerts,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-
-  // const { data: productPerformance, isLoading: isProductPerformanceLoading } = useQuery({
-  //   queryKey: ["productPerformance"],
-  //   queryFn: getProductPerformance,
-  //   staleTime: 1000 * 60 * 10, // 10 minutes
-  // });
+  const { data: inventoryAlerts, isLoading: isInventoryAlertsLoading } =
+    useQuery({
+      queryKey: ["inventoryAlerts"],
+      queryFn: getInventoryAlerts,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    });
 
   return (
     <div className="container mx-auto py-10">
-      <PageHeader 
+      <PageHeader
         title="Dashboard"
         description="Welcome back, Manager. Here's an overview of your bike shop."
         actions={
@@ -123,7 +124,6 @@ export default function Dashboard() {
         }
       />
 
-      {/* Sale Form */}
       {isFormOpen && <SaleForm onClose={handleCloseForm} />}
 
       {/* Sales and Commission Chart */}
@@ -153,7 +153,7 @@ export default function Dashboard() {
         </TabsList>
 
         <TabsContent value="overview">
-          <OverviewTab 
+          <OverviewTab
             summaryData={summaryData}
             recentSales={recentSales}
             inventoryAlerts={inventoryAlerts}
@@ -164,8 +164,6 @@ export default function Dashboard() {
           />
         </TabsContent>
 
-        {/* For brevity, we'll keep the other tabs as they are. 
-            In a real refactoring, we would extract each tab to its own component like OverviewTab */}
         <TabsContent value="analytics" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="col-span-2">
@@ -191,22 +189,132 @@ export default function Dashboard() {
                 )}
               </CardContent>
             </Card>
-
-            {/* Rest of analytics tab content (same as before) */}
           </div>
         </TabsContent>
 
         <TabsContent value="inventory" className="space-y-4">
-          {/* Inventory tab content (same as before) */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* Inventory Overview Card */}
+            <Card className="col-span-4">
+              <CardHeader>
+                <CardTitle>Inventory Overview</CardTitle>
+                <CardDescription>
+                  Current inventory status and alerts.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <InventoryAlertsList
+                  inventoryAlerts={inventoryAlerts}
+                  isLoading={isInventoryAlertsLoading}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" asChild className="w-full">
+                  <Link to="/products">Manage Inventory</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Inventory Metrics Card */}
+            <Card className="col-span-3">
+              <CardHeader>
+                <CardTitle>Inventory Metrics</CardTitle>
+                <CardDescription>Key inventory statistics.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MetricsGrid
+                  metrics={[
+                    {
+                      title: "Total Products",
+                      value: summaryData?.totalProducts || 0,
+                      icon: <ShoppingCart />,
+                      changeText: "Active products",
+                    },
+                    {
+                      title: "Out of Stock",
+                      value: summaryData?.outOfStockCount || 0,
+                      icon: <AlertTriangle />,
+                      changeText: "Items needing restock",
+                    },
+                    {
+                      title: "Low Stock",
+                      value: summaryData?.lowStockCount || 0,
+                      icon: <AlertTriangle />,
+                      changeText: "Items below threshold",
+                    },
+                  ]}
+                  isLoading={isSummaryLoading}
+                  columns={2}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="team" className="space-y-4">
-          {/* Team tab content (same as before) */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* Team Performance Card */}
+            <Card className="col-span-4">
+              <CardHeader>
+                <CardTitle>Team Performance</CardTitle>
+                <CardDescription>
+                  Sales team performance metrics and achievements.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MetricsGrid
+                  metrics={[
+                    {
+                      title: "Active Salespersons",
+                      value: summaryData?.activeSalespersons || 0,
+                      icon: <Users />,
+                      changeText: "Full-time team members",
+                    },
+                    {
+                      title: "Total Sales",
+                      value: summaryData?.totalSales || 0,
+                      icon: <ShoppingCart />,
+                      change: summaryData?.salesChangePercentage,
+                      changeText: "from last month",
+                    },
+                    {
+                      title: "Total Revenue",
+                      value: formatCurrency(summaryData?.totalRevenue || 0),
+                      icon: <DollarSign />,
+                      change: summaryData?.revenueChangePercentage,
+                      changeText: "from last month",
+                    },
+                  ]}
+                  isLoading={isSummaryLoading}
+                  columns={2}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" asChild className="w-full">
+                  <Link to="/salespersons">Manage Team</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Recent Team Activity Card */}
+            <Card className="col-span-3">
+              <CardHeader>
+                <CardTitle>Recent Team Activity</CardTitle>
+                <CardDescription>
+                  Latest sales and achievements.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RecentSalesList
+                  recentSales={recentSales}
+                  isLoading={isRecentSalesLoading}
+                  formatCurrency={formatCurrency}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
   );
 }
-
-// Import Skeleton at the top of the file if it's directly used here
-import { Skeleton } from "@/components/ui/skeleton";

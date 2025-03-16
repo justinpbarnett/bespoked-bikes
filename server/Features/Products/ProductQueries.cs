@@ -3,14 +3,9 @@ using server.Models;
 
 namespace server.Features.Products;
 
-public class GetProductsQuery
+public class GetProductsQuery(IRepository<Product> repository)
 {
-    private readonly IRepository<Product> _repository;
-
-    public GetProductsQuery(IRepository<Product> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Product> _repository = repository;
 
     public async Task<IEnumerable<ProductDto>> ExecuteAsync()
     {
@@ -29,14 +24,9 @@ public class GetProductsQuery
     }
 }
 
-public class GetProductByIdQuery
+public class GetProductByIdQuery(IRepository<Product> repository)
 {
-    private readonly IRepository<Product> _repository;
-
-    public GetProductByIdQuery(IRepository<Product> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Product> _repository = repository;
 
     public async Task<ProductDto?> ExecuteAsync(int id)
     {

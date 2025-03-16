@@ -4,24 +4,16 @@ namespace server.Features.Products;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController : ControllerBase
+public class ProductsController(
+    GetProductsQuery getProductsQuery,
+    GetProductByIdQuery getProductByIdQuery,
+    CreateProductCommand createProductCommand,
+    UpdateProductCommand updateProductCommand) : ControllerBase
 {
-    private readonly GetProductsQuery _getProductsQuery;
-    private readonly GetProductByIdQuery _getProductByIdQuery;
-    private readonly CreateProductCommand _createProductCommand;
-    private readonly UpdateProductCommand _updateProductCommand;
-
-    public ProductsController(
-        GetProductsQuery getProductsQuery,
-        GetProductByIdQuery getProductByIdQuery,
-        CreateProductCommand createProductCommand,
-        UpdateProductCommand updateProductCommand)
-    {
-        _getProductsQuery = getProductsQuery;
-        _getProductByIdQuery = getProductByIdQuery;
-        _createProductCommand = createProductCommand;
-        _updateProductCommand = updateProductCommand;
-    }
+    private readonly GetProductsQuery _getProductsQuery = getProductsQuery;
+    private readonly GetProductByIdQuery _getProductByIdQuery = getProductByIdQuery;
+    private readonly CreateProductCommand _createProductCommand = createProductCommand;
+    private readonly UpdateProductCommand _updateProductCommand = updateProductCommand;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
