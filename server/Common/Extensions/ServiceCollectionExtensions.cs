@@ -120,17 +120,23 @@ public static class ServiceCollectionExtensions
     private static void AddCors(WebApplicationBuilder builder)
     {
         var corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(',')
-            ?? new[] { "http://localhost:3000", "http://localhost:5173", "https://localhost:7219" };
+            ?? Array.Empty<string>();
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowReactApp", policy =>
             {
-                policy.WithOrigins(corsOrigins)
-                      .AllowAnyMethod()
-                      .AllowAnyHeader()
-                      .AllowCredentials()
-                      .SetIsOriginAllowed(origin => true); // More permissive for development
+                policy.SetIsOriginAllowed(origin =>
+                {
+                    if (string.IsNullOrEmpty(origin)) return false;
+                    var uri = new Uri(origin);
+                    return corsOrigins.Any(x =>
+                        x.Equals(uri.ToString(), StringComparison.OrdinalIgnoreCase) ||
+                        x.Equals(uri.Scheme + "://" + uri.Host + ":" + uri.Port, StringComparison.OrdinalIgnoreCase));
+                })
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
             });
         });
     }

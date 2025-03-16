@@ -19,13 +19,12 @@ public static class ApplicationExtensions
             app.UseSecurityHeaders();
         }
 
-        app.UseHttpsRedirection();
         app.UseResponseCaching();
-
-        // CORS must be before routing
-        app.UseCors("AllowReactApp");
-
+        app.UseHttpsRedirection();
         app.UseRouting();
+
+        // CORS must be after UseRouting and before UseEndpoints
+        app.UseCors("AllowReactApp");
 
         return app;
     }

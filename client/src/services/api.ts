@@ -26,13 +26,13 @@ import {
 // API URL can be overridden by environment variables
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 
+console.log("API URL:", API_URL); // Debug log
+
 // Create API client with simplified configuration
 const api = axios.create({
   baseURL: API_URL,
-  // Adding withCredentials if you need to handle cookies/auth
   withCredentials: true,
-  // Add reasonable timeout but slightly shorter for development to see errors faster
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -52,6 +52,8 @@ api.interceptors.request.use((config) => {
 // Add request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
+    console.log("Making request to:", config.url);
+    console.log("With headers:", config.headers);
     return config;
   },
   (error) => {
