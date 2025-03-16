@@ -67,7 +67,7 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow mb-6">
+    <div className="bg-card p-6 rounded-lg shadow mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Add New Customer</h2>
         <Button variant="ghost" size="sm" onClick={onClose}>

@@ -105,7 +105,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
   const isOutOfStock = selectedProduct && selectedProduct.quantityOnHand <= 0;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow mb-6">
+    <div className="bg-card p-6 rounded-lg shadow mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Record New Sale</h2>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -199,23 +199,23 @@ export default function SaleForm({ onClose }: SaleFormProps) {
         </div>
 
         {selectedProduct && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-md">
+          <div className="mt-6 bg-muted/30 p-4 rounded-md">
             <h3 className="font-medium mb-2">Product Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <span className="text-sm text-gray-500">Sale Price:</span>
+                <span className="text-sm text-muted-foreground">Sale Price:</span>
                 <p>${selectedProduct.salePrice.toFixed(2)}</p>
               </div>
               <div>
-                <span className="text-sm text-gray-500">Commission:</span>
+                <span className="text-sm text-muted-foreground">Commission:</span>
                 <p>{selectedProduct.commissionPercentage.toFixed(1)}%</p>
               </div>
               <div>
-                <span className="text-sm text-gray-500">In Stock:</span>
+                <span className="text-sm text-muted-foreground">In Stock:</span>
                 <p>{selectedProduct.quantityOnHand}</p>
               </div>
               <div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   Commission Amount:
                 </span>
                 <p>

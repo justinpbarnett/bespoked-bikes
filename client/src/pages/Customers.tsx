@@ -59,7 +59,7 @@ export default function Customers() {
 
       {isFormOpen && <CustomerForm onClose={handleCloseForm} />}
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>

@@ -64,7 +64,7 @@ export default function Products() {
         <ProductForm product={editingProduct} onClose={handleCloseForm} />
       )}
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>

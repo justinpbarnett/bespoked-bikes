@@ -83,7 +83,7 @@ public static class ProductSeedData
                 Style = "Road",
                 PurchasePrice = 2000m,
                 SalePrice = 3599.99m,
-                QuantityOnHand = 3,
+                QuantityOnHand = 0,
                 CommissionPercentage = 15.0m
             },
             new Product

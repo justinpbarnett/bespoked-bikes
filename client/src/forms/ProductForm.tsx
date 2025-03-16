@@ -47,7 +47,31 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
       onClose();
     },
     onError: (err: any) => {
-      setError(err.response?.data || "Failed to update product");
+      console.error("Update error:", err);
+      
+      // Check if we have a detailed error message from the server
+      if (err.response?.data) {
+        // If it's a string, use it directly
+        if (typeof err.response.data === "string") {
+          setError(err.response.data);
+        }
+        // If it's an object with a detail or message property
+        else if (err.response.data.detail) {
+          setError(err.response.data.detail);
+        }
+        else if (err.response.data.message) {
+          setError(err.response.data.message);
+        }
+        // If it's a title from the problem details
+        else if (err.response.data.title) {
+          setError(`${err.response.data.title}: ${err.response.data.detail || "Please check your input."}`);
+        }
+        else {
+          setError(JSON.stringify(err.response.data));
+        }
+      } else {
+        setError(`Failed to update product: ${err.message || "Unknown error"}`);
+      }
     },
   });
 
@@ -81,10 +105,27 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
       return;
     }
 
+    // Create a clean copy of the form data for submission
+    const submissionData = { ...formData };
+    
+    // Log detailed information for debugging
+    if (isEditing && product) {
+      console.log("Updating product:", {
+        id: product.id,
+        formData: submissionData,
+        requestPayload: {
+          id: product.id,  // This should be included in the body
+          ...submissionData
+        }
+      });
+    } else {
+      console.log("Creating new product:", submissionData);
+    }
+
     if (isEditing && product) {
       updateMutation.mutate({
         id: product.id,
-        data: formData,
+        data: submissionData,
       });
     } else {
       createMutation.mutate(formData);
@@ -92,7 +133,7 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow mb-6">
+    <div className="bg-card p-6 rounded-lg shadow mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">
           {isEditing ? "Edit Product" : "Add New Product"}

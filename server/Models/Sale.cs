@@ -9,9 +9,9 @@ public class Sale
     public int Id { get; set; }
 
     public int ProductId { get; set; }
-    
+
     public int SalespersonId { get; set; }
-    
+
     public int CustomerId { get; set; }
 
     [Required]
@@ -31,7 +31,16 @@ public class Sale
 
     [ForeignKey("SalespersonId")]
     public Salesperson Salesperson { get; set; } = null!;
-    
+
     [ForeignKey("CustomerId")]
     public Customer Customer { get; set; } = null!;
+}
+
+
+public class SaleCreateDto
+{
+    public int ProductId { get; set; }
+    public int SalespersonId { get; set; }
+    public int CustomerId { get; set; }
+    public DateTime SalesDate { get; set; }
 }

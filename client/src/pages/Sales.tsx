@@ -74,7 +74,7 @@ export default function Sales() {
 
       {isFormOpen && <SaleForm onClose={handleCloseForm} />}
 
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-card p-4 rounded-lg shadow">
         <h2 className="text-lg font-medium mb-4">Filter Sales</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function Sales() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>

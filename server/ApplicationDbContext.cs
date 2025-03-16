@@ -21,20 +21,19 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure unique constraints
         modelBuilder.Entity<Product>()
             .HasIndex(p => p.Name)
             .IsUnique();
 
-        // Remove unique constraints on phone and address since family members
-        // might share the same contact information
-
-        // Set up unique constraint on FirstName and LastName for Salesperson
         modelBuilder.Entity<Salesperson>()
-            .HasIndex(s => new { s.FirstName, s.LastName })
+            .HasIndex(s => new { s.FirstName, s.LastName, s.Address })
             .IsUnique();
 
-        // Seed data from separate seed data files
+        modelBuilder.Entity<Salesperson>()
+            .HasIndex(s => new { s.FirstName, s.LastName, s.Phone })
+            .IsUnique();
+
+
         DbSeeder.SeedDatabase(modelBuilder);
     }
 }

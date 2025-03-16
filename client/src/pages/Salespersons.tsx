@@ -74,7 +74,7 @@ export default function Salespersons() {
         />
       )}
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>

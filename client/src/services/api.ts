@@ -17,15 +17,65 @@ import {
   DiscountCreate,
 } from "../types";
 
-// In development, use relative URL which will be handled by Vite's proxy
-// In production, use the full URL to the API server
-const API_URL = import.meta.env.DEV ? "/api" : "https://localhost:7219/api";
+// For development: keep it simple with the proxy
+// Let the proxy in vite.config.ts handle the routing to the backend
+const API_URL = '/api';
 
+// Create API client with simplified configuration
 const api = axios.create({
   baseURL: API_URL,
   // Adding withCredentials if you need to handle cookies/auth
   withCredentials: false,
+  // Add reasonable timeout but slightly shorter for development to see errors faster
+  timeout: 10000, // 10 seconds
 });
+
+// Add request interceptor for authentication if needed
+api.interceptors.request.use((config) => {
+  // Example: Add authorization header if token exists
+  // const token = localStorage.getItem('token');
+  // if (token) {
+  //   config.headers.Authorization = `Bearer ${token}`;
+  // }
+  return config;
+});
+
+// Add response interceptor for error handling with detailed debugging
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle common errors (401, 403, 500, etc.)
+    if (error.response) {
+      // Session expired or unauthorized
+      if (error.response.status === 401) {
+        // Handle unauthorized (e.g., redirect to login)
+        console.error('Unauthorized access, please log in again');
+        // window.location.href = '/login';
+      }
+      
+      // Log other errors
+      console.error('API Error:', error.response.status, error.response.data);
+    } else if (error.request) {
+      // Network error - add more detailed debugging info
+      console.error('Network error details:', {
+        message: error.message,
+        request: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL,
+          headers: error.config?.headers,
+        },
+        code: error.code,
+        stack: error.stack
+      });
+    } else {
+      // Something else happened in setting up the request
+      console.error('Error setting up request:', error.message);
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
 // Products
 export const getProducts = async (): Promise<Product[]> => {
@@ -49,7 +99,10 @@ export const updateProduct = async (
   id: number,
   product: ProductUpdate
 ): Promise<void> => {
-  await api.put(`/products/${id}`, product);
+  await api.put(`/products/${id}`, {
+    ...product,
+    id: id  // Explicitly include id in the request body
+  });
 };
 
 // Salespersons
@@ -74,7 +127,11 @@ export const updateSalesperson = async (
   id: number,
   salesperson: SalespersonSubmit
 ): Promise<void> => {
-  await api.put(`/salespersons/${id}`, salesperson);
+  // Include the ID in the request body to match route parameter
+  await api.put(`/salespersons/${id}`, { 
+    ...salesperson,
+    id: id  // Explicitly include id in the request body
+  });
 };
 
 // Customers
@@ -139,6 +196,121 @@ export const createDiscount = async (
   discount: DiscountCreate
 ): Promise<Discount> => {
   const response = await api.post<Discount>("/discounts", discount);
+  return response.data;
+};
+
+// Dashboard
+export interface DashboardSummary {
+  totalRevenue: number;
+  totalSales: number;
+  activeSalespersons: number;
+  inventoryAlerts: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  revenueChangePercentage: number;
+  salesChangePercentage: number;
+  totalProducts: number;
+  inventoryValue: number;
+}
+
+export interface RecentSale {
+  id: number;
+  salesDate: string;
+  salePrice: number;
+  product: string;
+  salesperson: string;
+  customer: string;
+}
+
+export interface MonthlySalesData {
+  year: number;
+  data: Array<{
+    label: string;
+    sales: number;
+    commission: number;
+  }>;
+}
+
+export interface TopSalesperson {
+  id: number;
+  name: string;
+  avatar: string;
+  sales: number;
+  target: number;
+}
+
+export interface InventoryAlert {
+  outOfStock: Array<{
+    id: number;
+    name: string;
+    manufacturer: string;
+    quantityOnHand: number;
+    status: string;
+  }>;
+  lowStock: Array<{
+    id: number;
+    name: string;
+    manufacturer: string;
+    quantityOnHand: number;
+    reorderLevel: number;
+    status: string;
+  }>;
+}
+
+export interface ProductPerformance {
+  id: number;
+  name: string;
+  sales: number;
+  revenue: number;
+  percentage: number;
+}
+
+export const getDashboardSummary = async (): Promise<DashboardSummary> => {
+  const response = await api.get<DashboardSummary>("/dashboard/summary");
+  return response.data;
+};
+
+export const getRecentSales = async (
+  count: number = 5
+): Promise<RecentSale[]> => {
+  const response = await api.get<RecentSale[]>("/dashboard/recent-sales", {
+    params: { count },
+  });
+  return response.data;
+};
+
+export const getMonthlySalesData = async (
+  year: number | string
+): Promise<MonthlySalesData> => {
+  const response = await api.get<MonthlySalesData>("/dashboard/monthly-sales", {
+    params: { year },
+  });
+  return response.data;
+};
+
+export const getTopSalespersons = async (
+  count: number = 3
+): Promise<TopSalesperson[]> => {
+  const response = await api.get<TopSalesperson[]>(
+    "/dashboard/top-salespersons",
+    {
+      params: { count },
+    }
+  );
+  return response.data;
+};
+
+export const getInventoryAlerts = async (): Promise<InventoryAlert> => {
+  const response = await api.get<InventoryAlert>("/dashboard/inventory-alerts");
+  return response.data;
+};
+
+export const getProductPerformance = async (): Promise<
+  ProductPerformance[]
+> => {
+  const response = await api.get<ProductPerformance[]>(
+    "/dashboard/product-performance"
+  );
   return response.data;
 };
 
