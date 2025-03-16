@@ -5,6 +5,7 @@ using server.Features.Customers;
 using server.Features.Dashboard;
 using server.Features.Discounts;
 using server.Features.Products;
+using server.Features.Reports;
 using server.Features.Sales;
 using server.Features.Salespersons;
 using server.Infrastructure.Data;
@@ -81,6 +82,9 @@ public static class ServiceCollectionExtensions
         builder.Services.AddScoped<GetTopSalespersonsQuery>();
         builder.Services.AddScoped<GetInventoryAlertsQuery>();
         builder.Services.AddScoped<GetProductPerformanceQuery>();
+        
+        // Reports services
+        builder.Services.AddScoped<GetCommissionReportQuery>();
     }
 
     private static void AddSwagger(WebApplicationBuilder builder)

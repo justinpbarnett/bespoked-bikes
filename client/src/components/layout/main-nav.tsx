@@ -12,7 +12,14 @@ export function MainNav() {
     <div className="border-b">
       <div className="flex h-16 items-center px-4 container mx-auto">
         <Link to="/dashboard" className="font-bold text-xl mr-6">
-          <img src="/logo.png" alt="Bespoked Bikes" className="h-8" />
+          <img
+            src="/logo.png"
+            alt="Bespoked Bikes"
+            className="h-8 w-auto"
+            width={120}
+            height={32}
+            loading="eager"
+          />
         </Link>
         <nav className="flex items-center space-x-4 lg:space-x-6 mx-6">
           <Link
