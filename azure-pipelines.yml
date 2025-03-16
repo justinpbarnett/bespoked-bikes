@@ -2,11 +2,9 @@ trigger:
   - master
 
 pool:
-  vmImage: "ubuntu-latest"
+  name: Default
 
 variables:
-  - name: deployment_token
-    value: "89e57803e75643db204db0a9c83535209e2235dbdf716b253b760b530d9ef40706-beacd98d-2230-4313-8ffa-3121c0597c0600f0125088421f0f"
   - name: api_app_name
     value: "bespoked-bikes-server"
   - name: API_URL
@@ -14,11 +12,16 @@ variables:
 
 jobs:
   - job: BuildAndDeployAPI
+    strategy:
+      matrix:
+        api:
+          name: api
+          project: server/server.csproj
     steps:
       - task: DotNetCoreCLI@2
         inputs:
           command: "build"
-          projects: "server/server.csproj"
+          projects: $(project)
       - task: DotNetCoreCLI@2
         inputs:
           command: "publish"
@@ -39,6 +42,11 @@ jobs:
 
   - job: BuildAndDeployWeb
     dependsOn: BuildAndDeployAPI
+    strategy:
+      matrix:
+        web:
+          name: web
+          workingDir: client
     variables:
       VITE_API_URL: $[variables.API_URL]
     steps:
@@ -48,17 +56,17 @@ jobs:
       - task: Npm@1
         inputs:
           command: "install"
-          workingDir: "client"
+          workingDir: $(workingDir)
       - task: Npm@1
         inputs:
           command: "custom"
-          workingDir: "client"
+          workingDir: $(workingDir)
           customCommand: "run build"
         env:
           VITE_API_URL: $(VITE_API_URL)
           VITE_ENABLE_MOCK_DATA: "false"
       - task: AzureStaticWebApp@0
         inputs:
-          app_location: "client/dist"
-          azure_static_web_apps_api_token: $(deployment_token)
+          app_location: "$(workingDir)/dist"
+          azure_static_web_apps_api_token: $(DEPLOYMENT_TOKEN)
           skip_app_build: true
