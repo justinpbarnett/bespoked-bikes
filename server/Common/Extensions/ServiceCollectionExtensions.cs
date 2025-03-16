@@ -8,7 +8,6 @@ using server.Features.Products;
 using server.Features.Sales;
 using server.Features.Salespersons;
 using server.Infrastructure.Data;
-using server.Models;
 
 namespace server.Common.Extensions;
 

@@ -50,7 +50,7 @@ export interface Sale {
   customerId: number;
   customerFirstName: string;
   customerLastName: string;
-  
+
   // Virtual properties for compatibility with existing UI
   product?: {
     id: number;
@@ -95,6 +95,72 @@ export interface CommissionReport {
     totalRevenue: number;
     totalCommission: number;
   }>;
+}
+
+// Dashboard Types
+export interface DashboardSummary {
+  totalRevenue: number;
+  totalSales: number;
+  activeSalespersons: number;
+  inventoryAlerts: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  revenueChangePercentage: number;
+  salesChangePercentage: number;
+  totalProducts: number;
+  inventoryValue: number;
+}
+
+export interface RecentSale {
+  id: number;
+  salesDate: string;
+  salePrice: number;
+  product: string;
+  salesperson: string;
+  customer: string;
+}
+
+export interface MonthlySalesData {
+  year: number;
+  data: Array<{
+    label: string;
+    sales: number;
+    commission: number;
+  }>;
+}
+
+export interface TopSalesperson {
+  id: number;
+  name: string;
+  avatar: string;
+  sales: number;
+  target: number;
+}
+
+export interface InventoryAlert {
+  outOfStock: Array<{
+    id: number;
+    name: string;
+    manufacturer: string;
+    quantityOnHand: number;
+    status: string;
+  }>;
+  lowStock: Array<{
+    id: number;
+    name: string;
+    manufacturer: string;
+    quantityOnHand: number;
+    reorderLevel: number;
+    status: string;
+  }>;
+}
+
+export interface ProductPerformance {
+  id: number;
+  name: string;
+  sales: number;
+  revenue: number;
+  percentage: number;
 }
 
 // ----------------

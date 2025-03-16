@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createSalesperson, updateSalesperson } from "../services/api";
-import { Salesperson, SalespersonSubmit } from "../types";
+import { Salesperson, SalespersonSubmit } from "../types/index";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -20,7 +20,7 @@ export default function SalespersonForm({
   const queryClient = useQueryClient();
   const isEditing = !!salesperson;
 
-  const [formData, setFormData] = useState<Omit<Salesperson, "id">>({
+  const [formData, setFormData] = useState<SalespersonSubmit>({
     firstName: salesperson?.firstName || "",
     lastName: salesperson?.lastName || "",
     address: salesperson?.address || "",

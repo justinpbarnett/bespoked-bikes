@@ -1,53 +1,64 @@
 trigger:
-- master
+  - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 variables:
   - name: deployment_token
-    value: '651a4af066df900cb5fefb460ea36f059f5009a4ab66b577733226b5379f708806-d03c0093-ecdf-481f-8c3c-f4dfe5eeaaa200f16050630e0c0f'
+    value: "89e57803e75643db204db0a9c83535209e2235dbdf716b253b760b530d9ef40706-beacd98d-2230-4313-8ffa-3121c0597c0600f0125088421f0f"
   - name: api_app_name
-    value: 'bespoke-bikes-server'
+    value: "bespoked-bikes-server"
   - name: API_URL
-    value: 'https://$(api_app_name).azurewebsites.net'
+    value: "https://$(api_app_name).azurewebsites.net/api"
 
 jobs:
-- job: BuildAndDeployAPI
-  steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
-      projects: 'server/server.csproj'
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'publish'
-      publishWebProjects: true
-      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-  - task: AzureWebApp@1
-    inputs:
-      azureSubscription: 'Azure subscription 1'
-      appName: '$(api_app_name)'
-      package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+  - job: BuildAndDeployAPI
+    steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: "build"
+          projects: "server/server.csproj"
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: "publish"
+          publishWebProjects: true
+          arguments: "--configuration Release --output $(Build.ArtifactStagingDirectory)"
+      - task: AzureWebApp@1
+        inputs:
+          azureSubscription: "Azure subscription 1"
+          appName: "$(api_app_name)"
+          package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
+          appSettings: |
+            -PORT 80
+            -ASPNETCORE_ENVIRONMENT Production
+            -DB_CONNECTION_STRING "$(DB_CONNECTION_STRING)"
+            -JWT_SECRET "$(JWT_SECRET)"
+            -CORS_ORIGINS "https://bespoked-bikes.azurestaticapps.net"
+            -LOG_LEVEL "Information"
 
-- job: BuildAndDeployWeb
-  dependsOn: BuildAndDeployAPI  # Ensure API is deployed first
-  variables:
-    REACT_APP_API_URL: $[variables.API_URL]
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '14.x'
-  - task: Npm@1
-    inputs:
-      command: 'install'
-      workingDir: 'client'
-  - task: Npm@1
-    inputs:
-      command: 'custom'
-      workingDir: 'client'
-      customCommand: 'run build'
-  - task: AzureStaticWebApp@0
-    inputs:
-      app_location: 'client/build'
-      azure_static_web_apps_api_token: $[variables.deployment_token]
+  - job: BuildAndDeployWeb
+    dependsOn: BuildAndDeployAPI
+    variables:
+      VITE_API_URL: $[variables.API_URL]
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "18.x"
+      - task: Npm@1
+        inputs:
+          command: "install"
+          workingDir: "client"
+      - task: Npm@1
+        inputs:
+          command: "custom"
+          workingDir: "client"
+          customCommand: "run build"
+        env:
+          VITE_API_URL: $(VITE_API_URL)
+          VITE_ENABLE_MOCK_DATA: "false"
+      - task: AzureStaticWebApp@0
+        inputs:
+          app_location: "client/dist"
+          azure_static_web_apps_api_token: $(deployment_token)
+          skip_app_build: true

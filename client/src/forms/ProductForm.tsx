@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { createProduct, updateProduct } from "@/services/api";
-import { Product, ProductCreate, ProductUpdate } from "../types";
+import { Product, ProductCreate, ProductUpdate } from "../types/index";
 
 type ProductFormProps = {
   product: Product | null;

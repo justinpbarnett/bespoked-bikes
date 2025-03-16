@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import { createDiscount, getProducts } from "@/services/api";
-import { Discount, DiscountCreate, Product } from "@/types";
+import { Discount, DiscountCreate, Product } from "@/types/index";
 import { toast } from "sonner";
 
 type DiscountFormProps = {

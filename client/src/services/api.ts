@@ -7,6 +7,12 @@ import {
   Sale,
   Discount,
   CommissionReport,
+  DashboardSummary,
+  RecentSale,
+  MonthlySalesData,
+  TopSalesperson,
+  InventoryAlert,
+  ProductPerformance,
 
   // Request types
   ProductCreate,
@@ -15,11 +21,10 @@ import {
   CustomerCreate,
   SaleCreate,
   DiscountCreate,
-} from "../types";
+} from "../types/index";
 
-// For development: keep it simple with the proxy
-// Let the proxy in vite.config.ts handle the routing to the backend
-const API_URL = "/api";
+// API URL can be overridden by environment variables
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 // Create API client with simplified configuration
 const api = axios.create({
@@ -242,71 +247,6 @@ export const createDiscount = async (
 };
 
 // Dashboard
-export interface DashboardSummary {
-  totalRevenue: number;
-  totalSales: number;
-  activeSalespersons: number;
-  inventoryAlerts: number;
-  lowStockCount: number;
-  outOfStockCount: number;
-  revenueChangePercentage: number;
-  salesChangePercentage: number;
-  totalProducts: number;
-  inventoryValue: number;
-}
-
-export interface RecentSale {
-  id: number;
-  salesDate: string;
-  salePrice: number;
-  product: string;
-  salesperson: string;
-  customer: string;
-}
-
-export interface MonthlySalesData {
-  year: number;
-  data: Array<{
-    label: string;
-    sales: number;
-    commission: number;
-  }>;
-}
-
-export interface TopSalesperson {
-  id: number;
-  name: string;
-  avatar: string;
-  sales: number;
-  target: number;
-}
-
-export interface InventoryAlert {
-  outOfStock: Array<{
-    id: number;
-    name: string;
-    manufacturer: string;
-    quantityOnHand: number;
-    status: string;
-  }>;
-  lowStock: Array<{
-    id: number;
-    name: string;
-    manufacturer: string;
-    quantityOnHand: number;
-    reorderLevel: number;
-    status: string;
-  }>;
-}
-
-export interface ProductPerformance {
-  id: number;
-  name: string;
-  sales: number;
-  revenue: number;
-  percentage: number;
-}
-
 export const getDashboardSummary = async (): Promise<DashboardSummary> => {
   const response = await api.get<DashboardSummary>("/dashboard/summary");
   return response.data;
