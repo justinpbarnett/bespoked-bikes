@@ -9,6 +9,8 @@ variables:
     value: "bespoked-bikes-service"
   - name: API_URL
     value: "https://$(api_app_name).azurewebsites.net/api"
+  - name: RESOURCE_GROUP
+    value: "Profisee"
 
 jobs:
   - job: BuildAndDeployAPI
