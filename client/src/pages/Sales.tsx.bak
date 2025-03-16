@@ -31,6 +31,8 @@ export default function Sales() {
   } = useQuery({
     queryKey: ["sales", dateFilter.startDate, dateFilter.endDate],
     queryFn: () => getSalesFiltered(dateFilter.startDate, dateFilter.endDate),
+    staleTime: 10 * 1000, // Keep data fresh for 10 seconds
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   const handleAddNew = () => {
@@ -50,7 +52,15 @@ export default function Sales() {
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "MMM d, yyyy");
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+      return format(date, "MMM d, yyyy");
+    } catch (error) {
+      return "Invalid Date";
+    }
   };
 
   if (isLoading) {

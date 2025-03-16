@@ -158,6 +158,13 @@ public class GetRecentSalesQuery
             ))
             .ToListAsync();
 
+        // Log the results for debugging
+        foreach (var sale in recentSales)
+        {
+            Console.WriteLine($"Recent Sale: ID={sale.Id}, SalespersonName={sale.SalespersonName}, Product={sale.Product}");
+            Console.WriteLine($"Raw data: FirstName={sale.SalespersonName}, LastName={sale.SalespersonName}");
+        }
+
         return recentSales;
     }
 }

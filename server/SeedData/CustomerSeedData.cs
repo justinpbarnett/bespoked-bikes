@@ -35,7 +35,6 @@ public static class CustomerSeedData
                 Phone = "206-555-6789",
                 StartDate = new DateTime(2021, 5, 22)
             },
-            // Additional mock customers for pagination testing
             new Customer
             {
                 Id = 4,

@@ -81,6 +81,7 @@ public class GetSalesQuery
             .Include(s => s.Salesperson)
             .Include(s => s.Customer)
             .Include(s => s.AppliedDiscount)
+            .OrderByDescending(s => s.SalesDate)
             .Select(s => new
             {
                 s.Id,
@@ -139,6 +140,7 @@ public class FilterSalesQuery
             .Include(s => s.Salesperson)
             .Include(s => s.Customer)
             .Include(s => s.AppliedDiscount)
+            .OrderByDescending(s => s.SalesDate)
             .AsQueryable();
 
         if (startDate.HasValue)

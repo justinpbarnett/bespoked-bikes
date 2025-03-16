@@ -107,7 +107,6 @@ In your Azure DevOps project:
    - `API_URL`: The full URL to your API (e.g., "https://bespoke-bikes-server.azurewebsites.net/api")
    - `DB_CONNECTION_STRING`: Your Azure SQL Database connection string
    - `JWT_SECRET`: Secret key for JWT authentication
-   
 4. Mark sensitive variables like `DB_CONNECTION_STRING` and `JWT_SECRET` as secret (using the lock icon)
 5. Save the variable group
 
@@ -118,6 +117,7 @@ In your Azure DevOps project:
 > ⚠️ **IMPORTANT**: Never commit actual secrets or sensitive configuration to version control.
 
 Follow these practices for secure environment variable management:
+
 - Use `.env.example` files to document required variables without real values
 - Keep all `.env.*` files (except examples) in `.gitignore`
 - Store sensitive variables in Azure DevOps variable groups or Azure Key Vault
@@ -129,9 +129,9 @@ Follow these practices for secure environment variable management:
 The web application uses Vite environment variables with the `VITE_` prefix:
 
 - `VITE_API_URL`: The URL to the API server
-- `VITE_ENABLE_MOCK_DATA`: Feature flag to enable/disable mock data
 
 These are set in:
+
 - Local `.env.development` file (not committed to git) for local development
 - Azure DevOps pipeline variables for CI/CD builds
 
@@ -146,6 +146,7 @@ The API server reads environment variables directly:
 - `LOG_LEVEL`: Logging level
 
 These are set in:
+
 - `appsettings.json` for non-sensitive defaults
 - Local `appsettings.Development.json` (not committed to git) for local development
 - Azure DevOps pipeline variables for CI/CD

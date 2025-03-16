@@ -38,7 +38,6 @@ public static class SalespersonSeedData
                 StartDate = new DateTime(2021, 3, 10),
                 Manager = "Emily Brown"
             },
-            // Additional mock salespersons for pagination testing
             new Salesperson
             {
                 Id = 4,

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace server.Features.Dashboard;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableCors("AllowReactApp")]
 public class DashboardController : ControllerBase
 {
     private readonly GetDashboardSummaryQuery _getDashboardSummaryQuery;

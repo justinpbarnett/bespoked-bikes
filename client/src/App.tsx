@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./components/layout/MainLayout";
-import Products from "./pages/Products";
-import Salespersons from "./pages/Salespersons";
-import Customers from "./pages/Customers";
-import Sales from "./pages/Sales";
-import Discounts from "./pages/Discounts";
+import Products from "./pages/products";
+import Salespersons from "./pages/salespersons";
+import Customers from "./pages/customers";
+import Sales from "./pages/sales";
+import Discounts from "./pages/discounts";
 import Reports from "./pages/Reports";
 import Dashboard from "./pages/Dashboard";
 import { ThemeProvider } from "./components/theme-provider";

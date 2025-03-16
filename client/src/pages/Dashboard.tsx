@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SalesCommissionChart } from "../components/SalesCommissionChart";
 import { SalesCommissionChartSkeleton } from "../components/SalesCommissionChartSkeleton";
+import SaleForm from "../forms/SaleForm";
 import {
   getDashboardSummary,
   getRecentSales,
@@ -47,6 +48,18 @@ import type {
 } from "../types/index";
 
 export default function Dashboard() {
+  // State for sale form visibility
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Form handlers
+  const handleAddSale = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+  };
+
   // Get current date info for data filtering
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -65,9 +78,18 @@ export default function Dashboard() {
   >({
     queryKey: ["recentSales"],
     queryFn: () => getRecentSales(5),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 5 * 1000, // 5 seconds - more frequent updates for recent sales
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchInterval: 30 * 1000, // Refetch every 30 seconds while window is open
     gcTime: 1000 * 60 * 30, // 30 minutes
   });
+
+  // Add console logging to debug recent sales data
+  React.useEffect(() => {
+    if (recentSales) {
+      console.log("Recent Sales Data:", recentSales);
+    }
+  }, [recentSales]);
 
   // Fetch the current year data (which will be a 12-month rolling window)
   const { data: rollingYearSalesData, isLoading: isRollingYearSalesLoading } =
@@ -152,11 +174,9 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex gap-2 mt-4 md:mt-0">
-          <Button asChild>
-            <Link to="/sales/new">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Record Sale
-            </Link>
+          <Button onClick={handleAddSale}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Record Sale
           </Button>
           <Button variant="outline" asChild>
             <Link to="/reports">
@@ -166,6 +186,9 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Sale Form */}
+      {isFormOpen && <SaleForm onClose={handleCloseForm} />}
 
       {/* Sales and Commission Chart */}
       {isMonthlySalesLoading ? (
@@ -343,10 +366,10 @@ export default function Dashboard() {
                       <div key={sale.id} className="flex items-center">
                         <div className="space-y-1">
                           <div className="text-sm font-medium">
-                            {sale.productName}
+                            {sale.product}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {sale.salespersonName} • {sale.customerName}
+                            {sale.salesperson} • {sale.customer}
                           </div>
                         </div>
                         <div className="ml-auto font-medium">
@@ -545,7 +568,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-3">
-                {isTopSalespersonsLoading
+                {isTopSalespersonsLoading || !topSalespersons
                   ? Array.from({ length: 3 }).map((_, index) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center gap-4">
@@ -564,11 +587,13 @@ export default function Dashboard() {
                           <Avatar className="h-8 w-8">
                             <AvatarImage
                               src={person.avatar}
-                              alt={`${person.firstName} ${person.lastName}`}
+                              alt={`${person.firstName || ""} ${
+                                person.lastName || ""
+                              }`}
                             />
                             <AvatarFallback>
-                              {person.firstName[0]}
-                              {person.lastName[0]}
+                              {person.firstName?.[0] || ""}
+                              {person.lastName?.[0] || ""}
                             </AvatarFallback>
                           </Avatar>
                           <div className="space-y-1">
@@ -944,7 +969,9 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
-                {isTopSalespersonsLoading
+                {isTopSalespersonsLoading ||
+                !topSalespersons ||
+                topSalespersons.length === 0
                   ? // Skeleton loading state for team performance
                     Array(3)
                       .fill(0)
@@ -962,27 +989,44 @@ export default function Dashboard() {
                         </div>
                       ))
                   : // Actual team performance data
-                    topSalespersons?.map((person: TopSalesperson) => (
-                      <div key={person.id} className="space-y-2">
-                        <div className="flex items-center">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback>{person.avatar}</AvatarFallback>
-                          </Avatar>
-                          <div className="ml-4 space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                              {person.firstName} {person.lastName}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {formatCurrency(person.totalRevenue)} revenue
-                            </p>
+                    topSalespersons
+                      .filter(
+                        (person): person is TopSalesperson =>
+                          person &&
+                          typeof person === "object" &&
+                          "id" in person &&
+                          "firstName" in person &&
+                          "lastName" in person
+                      )
+                      .map((person: TopSalesperson) => (
+                        <div key={person.id} className="space-y-2">
+                          <div className="flex items-center">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback>
+                                {person.firstName?.[0] || ""}
+                                {person.lastName?.[0] || ""}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4 space-y-1">
+                              <p className="text-sm font-medium leading-none">
+                                {person.firstName || ""} {person.lastName || ""}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {formatCurrency(person.totalRevenue || 0)}{" "}
+                                revenue
+                              </p>
+                            </div>
                           </div>
+                          <Progress
+                            value={
+                              ((person.totalRevenue || 0) /
+                                (person.target || 1)) *
+                              100
+                            }
+                            className="h-2"
+                          />
                         </div>
-                        <Progress
-                          value={(person.totalRevenue / person.target) * 100}
-                          className="h-2"
-                        />
-                      </div>
-                    ))}
+                      ))}
               </div>
             </CardContent>
             <CardFooter>

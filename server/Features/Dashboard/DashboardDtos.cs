@@ -18,7 +18,7 @@ public record RecentSaleDto(
     DateTime SalesDate,
     decimal SalePrice,
     string Product,
-    string Salesperson,
+    string SalespersonName,
     string Customer
 );
 

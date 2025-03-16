@@ -6,7 +6,7 @@ import {
   getSalespersons,
   getCustomers,
 } from "@/services/api";
-import { SaleCreate } from "../types/index";
+import { SaleCreate, Sale } from "../types/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,8 +60,20 @@ export default function SaleForm({ onClose }: SaleFormProps) {
 
   const createMutation = useMutation({
     mutationFn: createSale,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Immediately update the cache with the new sale
+      const prevSales = queryClient.getQueryData(["sales"]) as Sale[] | undefined;
+      if (prevSales) {
+        queryClient.setQueryData(["sales"], [data, ...prevSales]);
+      }
+
+      // Invalidate all affected queries to trigger refetch from server
       queryClient.invalidateQueries({ queryKey: ["sales"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardSummary"] });
+      queryClient.invalidateQueries({ queryKey: ["recentSales"] });
+      queryClient.invalidateQueries({ queryKey: ["monthlySales"] });
+      queryClient.invalidateQueries({ queryKey: ["topSalespersons"] });
+      queryClient.invalidateQueries({ queryKey: ["productPerformance"] });
       onClose();
     },
     onError: (err: any) => {

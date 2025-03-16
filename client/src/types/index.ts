@@ -170,10 +170,10 @@ export interface DashboardSummary {
 
 export interface RecentSale {
   id: number;
-  productName: string;
-  customerName: string;
-  salespersonName: string;
-  saleDate: string;
+  product: string;
+  customer: string;
+  salesperson: string;
+  salesDate: string;
   salePrice: number;
   commissionAmount: number;
 }

@@ -52,7 +52,6 @@ public static class ProductSeedData
                 QuantityOnHand = 12,
                 CommissionPercentage = 9.0m
             },
-            // Additional mock products for pagination testing
             new Product
             {
                 Id = 5,
