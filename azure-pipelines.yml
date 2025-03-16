@@ -34,16 +34,22 @@ jobs:
           azureSubscription: "Profisee Service Connection"
           appName: "$(api_app_name)"
           package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
-      - task: AzureCLI@2
+      - task: AzurePowerShell@5
         inputs:
           azureSubscription: "Profisee Service Connection"
-          scriptType: "ps"
-          scriptLocation: "inlineScript"
-          inlineScript: |
-            az webapp config appsettings set --name $(api_app_name) --resource-group $(RESOURCE_GROUP) --settings WEBSITE_RUN_FROM_PACKAGE=1 PORT=80 ASPNETCORE_ENVIRONMENT=Production DB_CONNECTION_STRING="$env:DB_CONNECTION_STRING" JWT_SECRET="$env:JWT_SECRET" CORS_ORIGINS="https://bespoked-bikes.azurestaticapps.net" LOG_LEVEL=Information
-        env:
-          DB_CONNECTION_STRING: $(DB_CONNECTION_STRING)
-          JWT_SECRET: $(JWT_SECRET)
+          ScriptType: "InlineScript"
+          Inline: |
+            $appSettings = @{
+              WEBSITE_RUN_FROM_PACKAGE = "1"
+              PORT = "80"
+              ASPNETCORE_ENVIRONMENT = "Production"
+              DB_CONNECTION_STRING = "$(DB_CONNECTION_STRING)"
+              JWT_SECRET = "$(JWT_SECRET)"
+              CORS_ORIGINS = "https://bespoked-bikes.azurestaticapps.net"
+              LOG_LEVEL = "Information"
+            }
+            Set-AzWebApp -ResourceGroupName "$(RESOURCE_GROUP)" -Name "$(api_app_name)" -AppSettings $appSettings
+          azurePowerShellVersion: "LatestVersion"
 
   - job: BuildAndDeployWeb
     dependsOn: BuildAndDeployAPI
