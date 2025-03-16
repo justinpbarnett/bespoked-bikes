@@ -25,9 +25,10 @@ steps:
       npm run build
     displayName: "npm install and build"
 
-  - task: AzureWebApp@1
+  - task: AzureStaticWebApp@0
     inputs:
-      azureSubscription: "Profisee Service Connection"
-      appName: "bespoked-bikes-client"
-      package: "client/dist"
-    displayName: "Deploy to Azure Web App"
+      app_location: "client/dist"
+      api_location: ""
+      output_location: ""
+      deployment_token: $(DEPLOYMENT_TOKEN)
+    displayName: "Deploy to Azure Static Web App"
