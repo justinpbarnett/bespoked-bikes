@@ -32,14 +32,20 @@ jobs:
           azureSubscription: "Profisee Service Connection"
           appName: "$(api_app_name)"
           package: "$(Build.ArtifactStagingDirectory)/**/*.zip"
-          appSettings: |
-            -WEBSITE_RUN_FROM_PACKAGE 1
-            -PORT 80
-            -ASPNETCORE_ENVIRONMENT Production
-            -DB_CONNECTION_STRING "$(DB_CONNECTION_STRING)"
-            -JWT_SECRET "$(JWT_SECRET)"
-            -CORS_ORIGINS https://bespoked-bikes.azurestaticapps.net
-            -LOG_LEVEL Information
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: "Profisee Service Connection"
+          scriptType: "bash"
+          scriptLocation: "inlineScript"
+          inlineScript: |
+            az webapp config appsettings set --name $(api_app_name) --resource-group $(RESOURCE_GROUP) --settings \
+              WEBSITE_RUN_FROM_PACKAGE=1 \
+              PORT=80 \
+              ASPNETCORE_ENVIRONMENT=Production \
+              DB_CONNECTION_STRING="$(DB_CONNECTION_STRING)" \
+              JWT_SECRET="$(JWT_SECRET)" \
+              CORS_ORIGINS="https://bespoked-bikes.azurestaticapps.net" \
+              LOG_LEVEL=Information
 
   - job: BuildAndDeployWeb
     dependsOn: BuildAndDeployAPI
