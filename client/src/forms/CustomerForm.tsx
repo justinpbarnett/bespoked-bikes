@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createCustomer } from "../services/api";
-import { CustomerCreate } from "../types";
+import { CustomerCreate } from "../types/index";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { X } from "lucide-react";
-import { format } from "date-fns";
 
 type CustomerFormProps = {
   onClose: () => void;
@@ -20,7 +19,7 @@ export default function CustomerForm({ onClose }: CustomerFormProps) {
     lastName: "",
     address: "",
     phone: "",
-    startDate: format(new Date(), "yyyy-MM-dd"),
+    startDate: new Date().toISOString().split("T")[0],
   });
 
   const [error, setError] = useState<string | null>(null);

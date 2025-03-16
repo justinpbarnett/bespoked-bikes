@@ -1,8 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -25,7 +24,7 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SalesCommissionChart } from "../components/SalesCommissionChart";
@@ -35,21 +34,22 @@ import {
   getRecentSales,
   getMonthlySalesData,
   getTopSalespersons,
-  getInventoryAlerts,
   getProductPerformance,
-  type DashboardSummary,
-  type RecentSale,
-  type MonthlySalesData,
-  type TopSalesperson,
-  type ProductPerformance,
-  type InventoryAlert,
+  getInventoryAlerts,
 } from "../services/api";
+import type {
+  DashboardSummary,
+  RecentSale,
+  MonthlySalesData,
+  TopSalesperson,
+  ProductPerformance,
+  InventoryAlert,
+} from "../types/index";
 
 export default function Dashboard() {
   // Get current date info for data filtering
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth(); // 0-based index (0 = January)
 
   // Fetch dashboard data
   const { data: summaryData, isLoading: isSummaryLoading } =
@@ -103,8 +103,9 @@ export default function Dashboard() {
         month: item.label, // Map label to month for chart component
       })),
       allTimeData: allTimeSalesData.data.map((item) => ({
-        ...item,
-        month: item.label, // Map label to month for chart component
+        label: item.label,
+        sales: item.sales,
+        commission: item.commission,
       })),
     };
   }, [rollingYearSalesData, allTimeSalesData, currentYear]);
@@ -139,11 +140,6 @@ export default function Dashboard() {
       style: "currency",
       currency: "USD",
     }).format(amount);
-  };
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "MMM d, yyyy");
   };
 
   return (
@@ -346,12 +342,12 @@ export default function Dashboard() {
                     recentSales.map((sale: RecentSale) => (
                       <div key={sale.id} className="flex items-center">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            {sale.product}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Sold by {sale.salesperson} to {sale.customer}
-                          </p>
+                          <div className="text-sm font-medium">
+                            {sale.productName}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {sale.salespersonName} • {sale.customerName}
+                          </div>
                         </div>
                         <div className="ml-auto font-medium">
                           {formatCurrency(sale.salePrice)}
@@ -397,40 +393,61 @@ export default function Dashboard() {
                   ) : (
                     <>
                       {/* Out of stock products */}
-                      {inventoryAlerts?.outOfStock?.map((product) => (
-                        <div key={product.id} className="flex items-center">
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                              {product.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {product.manufacturer}
-                            </p>
-                          </div>
-                          <Badge variant="destructive" className="ml-auto">
-                            Out of Stock
-                          </Badge>
-                        </div>
-                      ))}
-
-                      {/* Low stock products, sorted by quantity (lowest first) */}
-                      {inventoryAlerts?.lowStock
-                        ?.sort((a, b) => a.quantityOnHand - b.quantityOnHand)
-                        .map((product) => (
+                      {inventoryAlerts?.outOfStock?.map(
+                        (product: {
+                          id: number;
+                          name: string;
+                          quantityOnHand: number;
+                          reorderPoint: number;
+                        }) => (
                           <div key={product.id} className="flex items-center">
                             <div className="space-y-1">
                               <p className="text-sm font-medium leading-none">
                                 {product.name}
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                {product.manufacturer}
+                                {product.quantityOnHand} units remaining
+                                (Reorder point: {product.reorderPoint})
                               </p>
                             </div>
-                            <Badge variant="outline" className="ml-auto">
-                              Low Stock: {product.quantityOnHand}
+                            <Badge variant="destructive" className="ml-auto">
+                              Out of Stock
                             </Badge>
                           </div>
-                        ))}
+                        )
+                      )}
+
+                      {/* Low stock products, sorted by quantity (lowest first) */}
+                      {inventoryAlerts?.lowStock
+                        ?.sort(
+                          (
+                            a: { quantityOnHand: number },
+                            b: { quantityOnHand: number }
+                          ) => a.quantityOnHand - b.quantityOnHand
+                        )
+                        .map(
+                          (product: {
+                            id: number;
+                            name: string;
+                            quantityOnHand: number;
+                            reorderPoint: number;
+                          }) => (
+                            <div key={product.id} className="flex items-center">
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">
+                                  {product.name}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {product.quantityOnHand} units remaining
+                                  (Reorder point: {product.reorderPoint})
+                                </p>
+                              </div>
+                              <Badge variant="outline" className="ml-auto">
+                                Low Stock
+                              </Badge>
+                            </div>
+                          )
+                        )}
 
                       {/* No alerts message */}
                       {!inventoryAlerts?.outOfStock?.length &&
@@ -508,7 +525,7 @@ export default function Dashboard() {
                               {product.name}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {product.percentage}%
+                              {formatCurrency(product.revenue)} revenue
                             </div>
                           </div>
                           <Progress value={product.percentage} />
@@ -529,40 +546,50 @@ export default function Dashboard() {
             <CardContent>
               <div className="grid gap-6 md:grid-cols-3">
                 {isTopSalespersonsLoading
-                  ? // Skeleton loading state for top salespersons
-                    Array(3)
-                      .fill(0)
-                      .map((_, index) => (
-                        <div key={index} className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Skeleton className="h-8 w-8 rounded-full" />
-                            <div className="space-y-1">
-                              <Skeleton className="h-4 w-24" />
-                              <Skeleton className="h-3 w-32" />
-                            </div>
+                  ? Array.from({ length: 3 }).map((_, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center gap-4">
+                          <Skeleton className="h-8 w-8 rounded-full" />
+                          <div className="space-y-1">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-32" />
                           </div>
-                          <Skeleton className="h-2 w-full" />
                         </div>
-                      ))
-                  : // Actual top salespersons data
-                    topSalespersons?.map((person: TopSalesperson) => (
+                        <Skeleton className="h-2 w-full" />
+                      </div>
+                    ))
+                  : topSalespersons?.map((person) => (
                       <div key={person.id} className="space-y-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4">
                           <Avatar className="h-8 w-8">
-                            <AvatarFallback>{person.avatar}</AvatarFallback>
+                            <AvatarImage
+                              src={person.avatar}
+                              alt={`${person.firstName} ${person.lastName}`}
+                            />
+                            <AvatarFallback>
+                              {person.firstName[0]}
+                              {person.lastName[0]}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                              {person.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {formatCurrency(person.sales)} /{" "}
+                            <div className="text-sm font-medium">
+                              {person.firstName} {person.lastName}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {formatCurrency(person.totalRevenue)} /{" "}
                               {formatCurrency(person.target)}
-                            </p>
+                            </div>
+                          </div>
+                          <div className="ml-auto font-medium">
+                            {Math.round(
+                              (person.totalRevenue / person.target) * 100
+                            )}
+                            %
                           </div>
                         </div>
                         <Progress
-                          value={(person.sales / person.target) * 100}
+                          value={(person.totalRevenue / person.target) * 100}
+                          className="h-2"
                         />
                       </div>
                     ))}
@@ -720,40 +747,61 @@ export default function Dashboard() {
                   ) : (
                     <>
                       {/* Out of stock products */}
-                      {inventoryAlerts?.outOfStock?.map((product) => (
-                        <div key={product.id} className="flex items-center">
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                              {product.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {product.manufacturer}
-                            </p>
-                          </div>
-                          <Badge variant="destructive" className="ml-auto">
-                            Out of Stock
-                          </Badge>
-                        </div>
-                      ))}
-
-                      {/* Low stock products, sorted by quantity (lowest first) */}
-                      {inventoryAlerts?.lowStock
-                        ?.sort((a, b) => a.quantityOnHand - b.quantityOnHand)
-                        .map((product) => (
+                      {inventoryAlerts?.outOfStock?.map(
+                        (product: {
+                          id: number;
+                          name: string;
+                          quantityOnHand: number;
+                          reorderPoint: number;
+                        }) => (
                           <div key={product.id} className="flex items-center">
                             <div className="space-y-1">
                               <p className="text-sm font-medium leading-none">
                                 {product.name}
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                {product.manufacturer}
+                                {product.quantityOnHand} units remaining
+                                (Reorder point: {product.reorderPoint})
                               </p>
                             </div>
-                            <Badge variant="outline" className="ml-auto">
-                              Low Stock: {product.quantityOnHand}
+                            <Badge variant="destructive" className="ml-auto">
+                              Out of Stock
                             </Badge>
                           </div>
-                        ))}
+                        )
+                      )}
+
+                      {/* Low stock products, sorted by quantity (lowest first) */}
+                      {inventoryAlerts?.lowStock
+                        ?.sort(
+                          (
+                            a: { quantityOnHand: number },
+                            b: { quantityOnHand: number }
+                          ) => a.quantityOnHand - b.quantityOnHand
+                        )
+                        .map(
+                          (product: {
+                            id: number;
+                            name: string;
+                            quantityOnHand: number;
+                            reorderPoint: number;
+                          }) => (
+                            <div key={product.id} className="flex items-center">
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">
+                                  {product.name}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {product.quantityOnHand} units remaining
+                                  (Reorder point: {product.reorderPoint})
+                                </p>
+                              </div>
+                              <Badge variant="outline" className="ml-auto">
+                                Low Stock
+                              </Badge>
+                            </div>
+                          )
+                        )}
 
                       {/* No alerts message */}
                       {!inventoryAlerts?.outOfStock?.length &&
@@ -820,13 +868,15 @@ export default function Dashboard() {
                   <>
                     <div className="text-2xl font-bold">
                       {topSalespersons && topSalespersons.length > 0
-                        ? topSalespersons[0].name
+                        ? topSalespersons[0].firstName +
+                          " " +
+                          topSalespersons[0].lastName
                         : "None"}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {formatCurrency(
                         topSalespersons && topSalespersons.length > 0
-                          ? topSalespersons[0].sales
+                          ? topSalespersons[0].totalRevenue
                           : 0
                       )}{" "}
                       in sales this quarter
@@ -855,7 +905,7 @@ export default function Dashboard() {
                       {formatCurrency(
                         topSalespersons && topSalespersons.length > 0
                           ? topSalespersons.reduce(
-                              (sum, person) => sum + person.sales,
+                              (sum, person) => sum + person.totalRevenue,
                               0
                             ) / topSalespersons.length
                           : 0
@@ -920,19 +970,15 @@ export default function Dashboard() {
                           </Avatar>
                           <div className="ml-4 space-y-1">
                             <p className="text-sm font-medium leading-none">
-                              {person.name}
+                              {person.firstName} {person.lastName}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {formatCurrency(person.sales)} /{" "}
-                              {formatCurrency(person.target)}
+                              {formatCurrency(person.totalRevenue)} revenue
                             </p>
-                          </div>
-                          <div className="ml-auto font-medium">
-                            {Math.round((person.sales / person.target) * 100)}%
                           </div>
                         </div>
                         <Progress
-                          value={(person.sales / person.target) * 100}
+                          value={(person.totalRevenue / person.target) * 100}
                           className="h-2"
                         />
                       </div>

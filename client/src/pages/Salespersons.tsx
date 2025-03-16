@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getSalespersons } from "../services/api";
-import { Salesperson } from "../types";
+import type { Salesperson } from "../types/index";
 import { Button } from "../components/ui/button";
 import SalespersonForm from "../forms/SalespersonForm";
 import {

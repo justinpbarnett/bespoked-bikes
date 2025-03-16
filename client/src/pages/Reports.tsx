@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCommissionReport } from "../services/api";
+import type {
+  CommissionReport,
+  DetailedSale,
+  ExtendedSalespersonCommission,
+} from "../types/index";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import {
@@ -12,23 +17,23 @@ import {
   TableRow,
 } from "../components/ui/table";
 import { format } from "date-fns";
-import { 
-  BarChart3, 
-  Calendar, 
-  Download, 
-  FileSpreadsheet, 
-  FilePlus2, 
-  FileText, 
+import {
+  BarChart3,
+  Calendar,
+  Download,
+  FileSpreadsheet,
+  FilePlus2,
+  FileText,
   PieChart,
   Search,
-  UserCircle
+  UserCircle,
 } from "lucide-react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "../components/ui/card";
 import {
   Tabs,
@@ -36,26 +41,23 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { SalespersonCommission } from "../types";
 
 export default function Reports() {
-  const currentYear = new Date().getFullYear();
-  const currentQuarter = Math.floor(new Date().getMonth() / 3) + 1;
-
   const [filter, setFilter] = useState({
-    year: currentYear,
-    quarter: currentQuarter,
+    year: new Date().getFullYear(),
+    quarter: Math.floor(new Date().getMonth() / 3) + 1,
   });
-  
+
   const [showReport, setShowReport] = useState(false);
-  const [selectedSalesperson, setSelectedSalesperson] = useState<SalespersonCommission | null>(null);
+  const [selectedSalesperson, setSelectedSalesperson] =
+    useState<ExtendedSalespersonCommission | null>(null);
 
   const {
     data: report,
     isLoading,
     error,
     refetch,
-  } = useQuery({
+  } = useQuery<CommissionReport>({
     queryKey: ["commissionReport", filter.year, filter.quarter],
     queryFn: () => getCommissionReport(filter.year, filter.quarter),
     enabled: false, // Don't automatically fetch
@@ -77,15 +79,15 @@ export default function Reports() {
     setSelectedSalesperson(null);
   };
 
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString: string | undefined | null): string => {
     if (!dateString) return "N/A";
     return format(new Date(dateString), "MMM d, yyyy");
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -95,8 +97,18 @@ export default function Reports() {
 
   const getMonthName = (monthNum: number) => {
     const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
     return months[monthNum - 1];
   };
@@ -112,52 +124,88 @@ export default function Reports() {
       "QUARTER SUMMARY",
       `Total Sales,${report.quarterSummary.totalSales}`,
       `Total Revenue,${formatCurrency(report.quarterSummary.totalRevenue)}`,
-      `Total Commission,${formatCurrency(report.quarterSummary.totalCommission)}`,
-      `Average Commission Rate,${formatPercentage(report.quarterSummary.averageCommissionRate)}`,
-      `Average Sale Price,${formatCurrency(report.quarterSummary.averageSalePrice)}`,
+      `Total Commission,${formatCurrency(
+        report.quarterSummary.totalCommission
+      )}`,
+      `Average Commission Rate,${formatPercentage(
+        report.quarterSummary.averageCommissionRate
+      )}`,
+      `Average Sale Price,${formatCurrency(
+        report.quarterSummary.averageSalePrice
+      )}`,
       `Salespersons with Sales,${report.quarterSummary.salespersonsWithSales} of ${report.quarterSummary.salespersonCount}`,
       "",
       "MONTHLY BREAKDOWN",
       "Month,Total Sales,Total Revenue,Total Commission",
-      ...report.monthlySummary.map(month => 
-        `${getMonthName(month.month)} ${month.year},${month.totalSales},${formatCurrency(month.totalRevenue)},${formatCurrency(month.totalCommission)}`
+      ...report.monthlySummary.map(
+        (month) =>
+          `${getMonthName(month.month)} ${month.year},${
+            month.totalSales
+          },${formatCurrency(month.totalRevenue)},${formatCurrency(
+            month.totalCommission
+          )}`
       ),
       "",
       "PRODUCT STYLE BREAKDOWN",
       "Style,Total Sales,Total Revenue,Total Commission,Average Price",
-      ...report.productStyles.map(style => 
-        `${style.style},${style.totalSales},${formatCurrency(style.totalRevenue)},${formatCurrency(style.totalCommission)},${formatCurrency(style.averagePrice)}`
+      ...report.productStyles.map(
+        (style) =>
+          `${style.style},${style.totalSales},${formatCurrency(
+            style.revenue
+          )},${formatCurrency(style.totalCommission)},${formatCurrency(
+            style.averagePrice
+          )}`
       ),
       "",
       "TOP PRODUCTS",
       "Product,Manufacturer,Total Sales,Total Revenue,Total Commission",
-      ...report.topProducts.map(product => 
-        `${product.productName},${product.manufacturer},${product.totalSales},${formatCurrency(product.totalRevenue)},${formatCurrency(product.totalCommission)}`
+      ...report.topProducts.map(
+        (product) =>
+          `${product.productName},${product.manufacturer},${
+            product.totalSales
+          },${formatCurrency(product.totalRevenue)},${formatCurrency(
+            product.totalCommission
+          )}`
       ),
       "",
       "SALESPERSON COMMISSIONS",
       "Salesperson,Manager,Total Sales,Total Revenue,Total Commission,Avg Commission Rate,Highest Sale,Lowest Sale",
-      ...report.commissions.map(commission => 
-        `${commission.firstName} ${commission.lastName},${commission.manager || "N/A"},${commission.totalSales},${formatCurrency(commission.totalRevenue)},${formatCurrency(commission.totalCommission)},${formatPercentage(commission.averageCommissionRate)},${formatCurrency(commission.highestSale)},${formatCurrency(commission.lowestSale)}`
-      )
+      ...report.commissions.map(
+        (commission) =>
+          `${commission.firstName} ${commission.lastName},${
+            commission.manager || "N/A"
+          },${commission.totalSales},${formatCurrency(
+            commission.totalRevenue
+          )},${formatCurrency(commission.totalCommission)},${formatPercentage(
+            commission.averageCommissionRate
+          )},${formatCurrency(commission.highestSale)},${formatCurrency(
+            commission.lowestSale
+          )}`
+      ),
     ];
 
     // Add detailed sales for each salesperson if they have any
-    report.commissions.forEach(sp => {
+    report.commissions.forEach((sp: ExtendedSalespersonCommission) => {
       if (sp.detailedSales.length > 0) {
         detailedReport.push("");
         detailedReport.push(`DETAILED SALES - ${sp.firstName} ${sp.lastName}`);
-        detailedReport.push("Sale Date,Product,Customer,Sale Price,Commission Amount,Commission Rate");
-        
-        sp.detailedSales.forEach(sale => {
+        detailedReport.push(
+          "Sale Date,Product,Customer,Sale Price,Commission Amount,Commission Rate"
+        );
+
+        sp.detailedSales.forEach((sale: DetailedSale) => {
           detailedReport.push(
-            `${formatDate(sale.salesDate)},${sale.productName},${sale.customerName},${formatCurrency(sale.salePrice)},${formatCurrency(sale.commissionAmount)},${formatPercentage(sale.commissionRate)}`
+            `${formatDate(sale.saleDate)},${sale.productName},${
+              sale.customerName
+            },${formatCurrency(sale.salePrice)},${formatCurrency(
+              sale.commissionAmount
+            )},${formatPercentage(sale.commissionRate)}`
           );
         });
       }
     });
 
-    const csvContent = detailedReport.join('\n');
+    const csvContent = detailedReport.join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -223,11 +271,7 @@ export default function Reports() {
             </select>
           </div>
           <div className="flex items-end gap-2">
-            <Button 
-              onClick={handleGenerateReport} 
-              className="mb-0.5"
-              size="lg"
-            >
+            <Button onClick={handleGenerateReport} className="mb-0.5" size="lg">
               <FilePlus2 className="w-5 h-5 mr-2" />
               Generate Report
             </Button>
@@ -243,10 +287,11 @@ export default function Reports() {
                     Q{report.quarter} {report.year} Commission Report
                   </h2>
                   <p className="text-gray-500">
-                    {formatDate(report.startDate)} - {formatDate(report.endDate)}
+                    {formatDate(report.startDate)} -{" "}
+                    {formatDate(report.endDate)}
                   </p>
                 </div>
-                
+
                 {report.commissions.length > 0 && (
                   <Button
                     variant="outline"
@@ -275,11 +320,12 @@ export default function Reports() {
                         {report.quarterSummary.totalSales}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {formatCurrency(report.quarterSummary.totalRevenue)} revenue
+                        {formatCurrency(report.quarterSummary.totalRevenue)}{" "}
+                        revenue
                       </p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -291,11 +337,14 @@ export default function Reports() {
                         {formatCurrency(report.quarterSummary.totalCommission)}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {formatPercentage(report.quarterSummary.averageCommissionRate)} avg rate
+                        {formatPercentage(
+                          report.quarterSummary.averageCommissionRate
+                        )}{" "}
+                        avg rate
                       </p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -311,7 +360,7 @@ export default function Reports() {
                       </p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -320,7 +369,8 @@ export default function Reports() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">
-                        {report.quarterSummary.salespersonsWithSales} / {report.quarterSummary.salespersonCount}
+                        {report.quarterSummary.salespersonsWithSales} /{" "}
+                        {report.quarterSummary.salespersonCount}
                       </div>
                       <p className="text-xs text-muted-foreground">
                         made sales this quarter
@@ -347,11 +397,12 @@ export default function Reports() {
                     {selectedSalesperson && (
                       <TabsTrigger value="details">
                         <FileText className="w-4 h-4 mr-2" />
-                        {selectedSalesperson.firstName} {selectedSalesperson.lastName}
+                        {selectedSalesperson.firstName}{" "}
+                        {selectedSalesperson.lastName}
                       </TabsTrigger>
                     )}
                   </TabsList>
-                  
+
                   {/* Salespersons Tab */}
                   <TabsContent value="salespersons" className="space-y-4">
                     <Card>
@@ -375,43 +426,45 @@ export default function Reports() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {report.commissions.map((sp) => (
-                              <TableRow key={sp.salespersonId}>
-                                <TableCell className="font-medium">
-                                  {sp.firstName} {sp.lastName}
-                                </TableCell>
-                                <TableCell>{sp.manager || "N/A"}</TableCell>
-                                <TableCell>{sp.totalSales}</TableCell>
-                                <TableCell>
-                                  {formatCurrency(sp.totalRevenue)}
-                                </TableCell>
-                                <TableCell>
-                                  {formatCurrency(sp.totalCommission)}
-                                </TableCell>
-                                <TableCell>
-                                  {formatPercentage(sp.averageCommissionRate)}
-                                </TableCell>
-                                <TableCell>
-                                  {sp.totalSales > 0 && (
-                                    <Button 
-                                      variant="ghost" 
-                                      size="sm"
-                                      onClick={() => {
-                                        setSelectedSalesperson(sp);
-                                      }}
-                                    >
-                                      View
-                                    </Button>
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
+                            {report.commissions.map(
+                              (sp: ExtendedSalespersonCommission) => (
+                                <TableRow key={sp.salespersonId}>
+                                  <TableCell className="font-medium">
+                                    {sp.firstName} {sp.lastName}
+                                  </TableCell>
+                                  <TableCell>{sp.manager || "N/A"}</TableCell>
+                                  <TableCell>{sp.totalSales}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(sp.totalRevenue)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatCurrency(sp.totalCommission)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatPercentage(sp.averageCommissionRate)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {sp.totalSales > 0 && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          setSelectedSalesperson(sp);
+                                        }}
+                                      >
+                                        View
+                                      </Button>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            )}
                           </TableBody>
                         </Table>
                       </CardContent>
                     </Card>
                   </TabsContent>
-                  
+
                   {/* Products Tab */}
                   <TabsContent value="products" className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -451,7 +504,7 @@ export default function Reports() {
                           </Table>
                         </CardContent>
                       </Card>
-                      
+
                       {/* Product Styles */}
                       <Card>
                         <CardHeader>
@@ -481,7 +534,7 @@ export default function Reports() {
                                     {formatCurrency(style.averagePrice)}
                                   </TableCell>
                                   <TableCell>
-                                    {formatCurrency(style.totalRevenue)}
+                                    {formatCurrency(style.revenue)}
                                   </TableCell>
                                 </TableRow>
                               ))}
@@ -491,7 +544,7 @@ export default function Reports() {
                       </Card>
                     </div>
                   </TabsContent>
-                  
+
                   {/* Monthly Tab */}
                   <TabsContent value="monthly" className="space-y-4">
                     <Card>
@@ -535,7 +588,7 @@ export default function Reports() {
                       </CardContent>
                     </Card>
                   </TabsContent>
-                  
+
                   {/* Salesperson Details Tab */}
                   {selectedSalesperson && (
                     <TabsContent value="details" className="space-y-4">
@@ -544,10 +597,12 @@ export default function Reports() {
                           <div className="flex justify-between items-center">
                             <div>
                               <CardTitle>
-                                {selectedSalesperson.firstName} {selectedSalesperson.lastName}
+                                {selectedSalesperson.firstName}{" "}
+                                {selectedSalesperson.lastName}
                               </CardTitle>
                               <CardDescription>
-                                Detailed sales performance for Q{report.quarter} {report.year}
+                                Detailed sales performance for Q{report.quarter}{" "}
+                                {report.year}
                               </CardDescription>
                             </div>
                             <Button
@@ -563,58 +618,104 @@ export default function Reports() {
                           {/* Salesperson Profile */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
-                              <h4 className="text-sm font-semibold mb-1">Manager</h4>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Manager
+                              </h4>
                               <p>{selectedSalesperson.manager || "N/A"}</p>
                             </div>
                             <div>
-                              <h4 className="text-sm font-semibold mb-1">Start Date</h4>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Start Date
+                              </h4>
                               <p>{formatDate(selectedSalesperson.startDate)}</p>
                             </div>
                             <div>
-                              <h4 className="text-sm font-semibold mb-1">First Sale</h4>
-                              <p>{formatDate(selectedSalesperson.firstSaleDate)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                First Sale
+                              </h4>
+                              <p>
+                                {formatDate(selectedSalesperson.firstSaleDate)}
+                              </p>
                             </div>
                             <div>
-                              <h4 className="text-sm font-semibold mb-1">Last Sale</h4>
-                              <p>{formatDate(selectedSalesperson.lastSaleDate)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Last Sale
+                              </h4>
+                              <p>
+                                {formatDate(selectedSalesperson.lastSaleDate)}
+                              </p>
                             </div>
                           </div>
-                          
+
                           {/* Performance Stats */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="bg-muted p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Total Sales</h4>
-                              <p className="text-xl font-bold">{selectedSalesperson.totalSales}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Total Sales
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {selectedSalesperson.totalSales}
+                              </p>
                             </div>
                             <div className="bg-muted p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Total Revenue</h4>
-                              <p className="text-xl font-bold">{formatCurrency(selectedSalesperson.totalRevenue)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Total Revenue
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {formatCurrency(
+                                  selectedSalesperson.totalRevenue
+                                )}
+                              </p>
                             </div>
                             <div className="bg-muted p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Total Commission</h4>
-                              <p className="text-xl font-bold">{formatCurrency(selectedSalesperson.totalCommission)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Total Commission
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {formatCurrency(
+                                  selectedSalesperson.totalCommission
+                                )}
+                              </p>
                             </div>
                             <div className="bg-muted p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Avg Commission Rate</h4>
-                              <p className="text-xl font-bold">{formatPercentage(selectedSalesperson.averageCommissionRate)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Avg Commission Rate
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {formatPercentage(
+                                  selectedSalesperson.averageCommissionRate
+                                )}
+                              </p>
                             </div>
                           </div>
-                          
+
                           {/* Highest/Lowest Sales */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="border border-border p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Highest Sale</h4>
-                              <p className="text-xl font-bold">{formatCurrency(selectedSalesperson.highestSale)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Highest Sale
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {formatCurrency(
+                                  selectedSalesperson.highestSale
+                                )}
+                              </p>
                             </div>
                             <div className="border border-border p-3 rounded-md">
-                              <h4 className="text-sm font-semibold mb-1">Lowest Sale</h4>
-                              <p className="text-xl font-bold">{formatCurrency(selectedSalesperson.lowestSale)}</p>
+                              <h4 className="text-sm font-semibold mb-1">
+                                Lowest Sale
+                              </h4>
+                              <p className="text-xl font-bold">
+                                {formatCurrency(selectedSalesperson.lowestSale)}
+                              </p>
                             </div>
                           </div>
-                          
+
                           {/* Detailed Sales Table */}
                           <div>
-                            <h3 className="text-lg font-semibold mb-3">Individual Sales</h3>
+                            <h3 className="text-lg font-semibold mb-3">
+                              Individual Sales
+                            </h3>
                             {selectedSalesperson.detailedSales.length > 0 ? (
                               <Table>
                                 <TableHeader>
@@ -628,28 +729,36 @@ export default function Reports() {
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                  {selectedSalesperson.detailedSales.map((sale) => (
-                                    <TableRow key={sale.saleId}>
-                                      <TableCell>
-                                        {formatDate(sale.salesDate)}
-                                      </TableCell>
-                                      <TableCell>
-                                        {sale.productName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {sale.customerName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {formatCurrency(sale.salePrice)}
-                                      </TableCell>
-                                      <TableCell>
-                                        {formatCurrency(sale.commissionAmount)}
-                                      </TableCell>
-                                      <TableCell>
-                                        {formatPercentage(sale.commissionRate)}
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
+                                  {selectedSalesperson.detailedSales.map(
+                                    (sale: DetailedSale) => (
+                                      <TableRow
+                                        key={`${sale.saleDate}-${sale.productName}`}
+                                      >
+                                        <TableCell>
+                                          {formatDate(sale.saleDate)}
+                                        </TableCell>
+                                        <TableCell>
+                                          {sale.productName}
+                                        </TableCell>
+                                        <TableCell>
+                                          {sale.customerName}
+                                        </TableCell>
+                                        <TableCell>
+                                          {formatCurrency(sale.salePrice)}
+                                        </TableCell>
+                                        <TableCell>
+                                          {formatCurrency(
+                                            sale.commissionAmount
+                                          )}
+                                        </TableCell>
+                                        <TableCell>
+                                          {formatPercentage(
+                                            sale.commissionRate
+                                          )}
+                                        </TableCell>
+                                      </TableRow>
+                                    )
+                                  )}
                                 </TableBody>
                               </Table>
                             ) : (
@@ -677,7 +786,7 @@ export default function Reports() {
             )}
           </>
         )}
-        
+
         {!showReport && (
           <div className="bg-muted/30 p-8 text-center rounded-md">
             <Search className="w-12 h-12 mx-auto text-gray-400 mb-2" />
@@ -685,7 +794,8 @@ export default function Reports() {
               Generate a report to view data
             </h3>
             <p className="text-muted-foreground mt-1">
-              Select a year and quarter, then click 'Generate Report' to view commission data.
+              Select a year and quarter, then click 'Generate Report' to view
+              commission data.
             </p>
           </div>
         )}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "../services/api";
-import { Product } from "../types";
+import { Product } from "../types/index";
 import { Button } from "../components/ui/button";
 import ProductForm from "../forms/ProductForm";
 import {

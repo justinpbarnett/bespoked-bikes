@@ -6,12 +6,11 @@ import {
   getSalespersons,
   getCustomers,
 } from "@/services/api";
-import { SaleCreate } from "@/types";
+import { SaleCreate } from "../types/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
-import { format } from "date-fns";
 
 type SaleFormProps = {
   onClose: () => void;
@@ -22,10 +21,10 @@ export default function SaleForm({ onClose }: SaleFormProps) {
 
   const [formData, setFormData] = useState<SaleCreate>({
     productId: 0,
-    salespersonId: 0,
     customerId: 0,
-    salesDate: format(new Date(), "yyyy-MM-dd"),
-    discountCode: "",
+    salespersonId: 0,
+    saleDate: new Date().toISOString().split("T")[0],
+    salePrice: 0,
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +76,7 @@ export default function SaleForm({ onClose }: SaleFormProps) {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "salesDate" || name === "discountCode" ? value : parseInt(value, 10),
+      [name]: name === "saleDate" ? value : parseInt(value, 10),
     }));
   };
 
@@ -90,10 +89,10 @@ export default function SaleForm({ onClose }: SaleFormProps) {
       formData.productId <= 0 ||
       formData.salespersonId <= 0 ||
       formData.customerId <= 0 ||
-      !formData.salesDate
+      !formData.saleDate
     ) {
       setError(
-        "Please select a product, salesperson, customer, and sales date."
+        "Please select a product, salesperson, customer, and sale date."
       );
       return;
     }
@@ -187,26 +186,14 @@ export default function SaleForm({ onClose }: SaleFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="salesDate">Sales Date</Label>
+            <Label htmlFor="saleDate">Sale Date</Label>
             <Input
-              id="salesDate"
-              name="salesDate"
+              id="saleDate"
+              name="saleDate"
               type="date"
-              value={formData.salesDate}
+              value={formData.saleDate}
               onChange={handleChange}
               required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="discountCode">Discount Code (optional)</Label>
-            <Input
-              id="discountCode"
-              name="discountCode"
-              type="text"
-              placeholder="Enter discount code if you have one"
-              value={formData.discountCode}
-              onChange={handleChange}
             />
           </div>
         </div>
@@ -216,11 +203,15 @@ export default function SaleForm({ onClose }: SaleFormProps) {
             <h3 className="font-medium mb-2">Product Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <span className="text-sm text-muted-foreground">Sale Price:</span>
+                <span className="text-sm text-muted-foreground">
+                  Sale Price:
+                </span>
                 <p>${selectedProduct.salePrice.toFixed(2)}</p>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Commission:</span>
+                <span className="text-sm text-muted-foreground">
+                  Commission:
+                </span>
                 <p>{selectedProduct.commissionPercentage.toFixed(1)}%</p>
               </div>
               <div>

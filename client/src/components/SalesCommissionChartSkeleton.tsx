@@ -1,14 +1,25 @@
-"use client"
+"use client";
 
-import * as React from "react"
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SalesCommissionChartSkeletonProps {
-  title: string
-  description?: string
-  timeRangeSelector?: boolean
+  title?: string;
+  description?: string;
+  timeRangeSelector?: boolean;
 }
 
 export function SalesCommissionChartSkeleton({
@@ -18,29 +29,32 @@ export function SalesCommissionChartSkeleton({
 }: SalesCommissionChartSkeletonProps) {
   return (
     <Card>
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>{title}</CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
-        </div>
-        {timeRangeSelector && (
-          <Skeleton className="h-9 w-[160px]" />
-        )}
-      </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <div className="aspect-auto h-[300px] w-full">
-          <div className="flex h-full w-full flex-col space-y-4">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-4 w-20" />
-              <div className="flex space-x-2">
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-4 w-4" />
-              </div>
-            </div>
-            <Skeleton className="h-[250px] w-full" />
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            {title && <CardTitle>{title}</CardTitle>}
+            {description && <CardDescription>{description}</CardDescription>}
           </div>
+          {timeRangeSelector && (
+            <Select defaultValue="12m">
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select time range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="12m">Last 12 months</SelectItem>
+                <SelectItem value="6m">Last 6 months</SelectItem>
+                <SelectItem value="3m">Last 3 months</SelectItem>
+                <SelectItem value="all">All time</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="aspect-[2/1] w-full">
+          <Skeleton className="h-full w-full" />
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

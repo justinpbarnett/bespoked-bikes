@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomers } from "../services/api";
-import { Customer } from "../types";
 import { Button } from "../components/ui/button";
 import CustomerForm from "../forms/CustomerForm";
 import {

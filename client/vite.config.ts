@@ -4,8 +4,8 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
-  
+  const isProduction = mode === "production";
+
   return {
     plugins: [react()],
     server: {
@@ -26,12 +26,12 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       // Production optimizations
-      minify: isProduction ? 'terser' : false,
+      minify: isProduction ? "terser" : false,
       terserOptions: {
         compress: {
           drop_console: isProduction,
-          drop_debugger: isProduction
-        }
+          drop_debugger: isProduction,
+        },
       },
       // Source maps in development only
       sourcemap: !isProduction,
@@ -39,11 +39,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            ui: ['@shadcn/ui'], 
-          }
-        }
-      }
-    }
+            vendor: ["react", "react-dom", "react-router-dom"],
+          },
+        },
+      },
+    },
   };
 });

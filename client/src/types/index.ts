@@ -5,6 +5,7 @@
 export interface Product {
   id: number;
   name: string;
+  description: string;
   manufacturer: string;
   style: string;
   purchasePrice: number;
@@ -21,7 +22,7 @@ export interface Salesperson {
   phone: string;
   startDate: string;
   terminationDate: string | null;
-  manager: string | null;
+  manager: string;
 }
 
 export interface Customer {
@@ -35,37 +36,23 @@ export interface Customer {
 
 export interface Sale {
   id: number;
-  salesDate: string;
-  salePrice: number;
-  commissionAmount: number;
-  originalPrice: number;
-  appliedDiscountId: number | null;
-  appliedDiscountPercentage: number;
-  appliedDiscountCode?: string;
   productId: number;
-  productName: string;
-  salespersonId: number;
-  salespersonFirstName: string;
-  salespersonLastName: string;
   customerId: number;
+  salespersonId: number;
+  saleDate: string;
+  salePrice: number;
+  commissionPercentage: number;
+  commissionAmount: number;
+  product?: Product;
+  customer?: Customer;
+  productName: string;
   customerFirstName: string;
   customerLastName: string;
-
-  // Virtual properties for compatibility with existing UI
-  product?: {
-    id: number;
-    name: string;
-  };
-  salesperson?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-  };
-  customer?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-  };
+  salespersonFirstName: string;
+  salespersonLastName: string;
+  originalPrice?: number;
+  appliedDiscountPercentage: number;
+  appliedDiscountCode?: string;
 }
 
 export interface Discount {
@@ -82,42 +69,113 @@ export interface Discount {
   requiresCode: boolean;
 }
 
+export interface DetailedSale {
+  saleDate: string;
+  productName: string;
+  customerName: string;
+  salePrice: number;
+  commissionAmount: number;
+  commissionRate: number;
+}
+
+export interface ExtendedSalespersonCommission {
+  salespersonId: number;
+  firstName: string;
+  lastName: string;
+  totalSales: number;
+  totalRevenue: number;
+  totalCommission: number;
+  averageCommissionRate: number;
+  highestSale: number;
+  lowestSale: number;
+  manager?: string;
+  startDate?: string;
+  firstSaleDate?: string;
+  lastSaleDate?: string;
+  detailedSales: DetailedSale[];
+}
+
+export interface StyleReport {
+  style: string;
+  count: number;
+  revenue: number;
+  totalSales: number;
+  totalCommission: number;
+  averagePrice: number;
+  totalRevenue: number;
+}
+
 export interface CommissionReport {
-  year: number;
-  quarter: number;
   startDate: string;
   endDate: string;
-  commissions: Array<{
-    salespersonId: number;
-    firstName: string;
-    lastName: string;
+  totalSales: number;
+  totalRevenue: number;
+  totalCommission: number;
+  averagePrice: number;
+  commissions: ExtendedSalespersonCommission[];
+  quarterSummary: {
+    totalSales: number;
+    totalRevenue: number;
+    totalCommission: number;
+    averageCommissionRate: number;
+    averageSalePrice: number;
+    salespersonsWithSales: number;
+    salespersonCount: number;
+  };
+  monthlySummary: Array<{
+    month: number;
+    year: number;
     totalSales: number;
     totalRevenue: number;
     totalCommission: number;
   }>;
+  productStyles: Array<{
+    style: string;
+    count: number;
+    revenue: number;
+    totalSales: number;
+    totalCommission: number;
+    averagePrice: number;
+  }>;
+  topProducts: Array<{
+    productId: number;
+    productName: string;
+    manufacturer: string;
+    totalSales: number;
+    totalRevenue: number;
+    totalCommission: number;
+  }>;
+  quarter: number;
+  year: number;
 }
 
 // Dashboard Types
 export interface DashboardSummary {
-  totalRevenue: number;
   totalSales: number;
+  totalRevenue: number;
+  totalCommission: number;
+  averageCommissionRate: number;
+  averageSalePrice: number;
+  salespersonsWithSales: number;
+  salespersonCount: number;
+  revenueChangePercentage: number;
+  salesChangePercentage: number;
   activeSalespersons: number;
   inventoryAlerts: number;
   lowStockCount: number;
   outOfStockCount: number;
-  revenueChangePercentage: number;
-  salesChangePercentage: number;
   totalProducts: number;
   inventoryValue: number;
 }
 
 export interface RecentSale {
   id: number;
-  salesDate: string;
+  productName: string;
+  customerName: string;
+  salespersonName: string;
+  saleDate: string;
   salePrice: number;
-  product: string;
-  salesperson: string;
-  customer: string;
+  commissionAmount: number;
 }
 
 export interface MonthlySalesData {
@@ -131,9 +189,12 @@ export interface MonthlySalesData {
 
 export interface TopSalesperson {
   id: number;
-  name: string;
-  avatar: string;
-  sales: number;
+  firstName: string;
+  lastName: string;
+  totalSales: number;
+  totalRevenue: number;
+  totalCommission: number;
+  avatar?: string;
   target: number;
 }
 
@@ -141,17 +202,14 @@ export interface InventoryAlert {
   outOfStock: Array<{
     id: number;
     name: string;
-    manufacturer: string;
     quantityOnHand: number;
-    status: string;
+    reorderPoint: number;
   }>;
   lowStock: Array<{
     id: number;
     name: string;
-    manufacturer: string;
     quantityOnHand: number;
-    reorderLevel: number;
-    status: string;
+    reorderPoint: number;
   }>;
 }
 
@@ -160,6 +218,7 @@ export interface ProductPerformance {
   name: string;
   sales: number;
   revenue: number;
+  commission: number;
   percentage: number;
 }
 
@@ -169,6 +228,7 @@ export interface ProductPerformance {
 
 export interface ProductCreate {
   name: string;
+  description: string;
   manufacturer: string;
   style: string;
   purchasePrice: number;
@@ -177,8 +237,9 @@ export interface ProductCreate {
   commissionPercentage: number;
 }
 
-// Allow updating all product fields including name
-export interface ProductUpdate extends ProductCreate {}
+export interface ProductUpdate extends Partial<ProductCreate> {
+  id?: number;
+}
 
 export interface SalespersonBase {
   firstName: string;
@@ -186,7 +247,7 @@ export interface SalespersonBase {
   address: string;
   phone: string;
   startDate: string;
-  manager: string | null;
+  manager: string;
 }
 
 export interface SalespersonSubmit extends SalespersonBase {
@@ -203,10 +264,10 @@ export interface CustomerCreate {
 
 export interface SaleCreate {
   productId: number;
-  salespersonId: number;
   customerId: number;
-  salesDate: string;
-  discountCode?: string;
+  salespersonId: number;
+  saleDate: string;
+  salePrice: number;
 }
 
 export interface DiscountCreate {
@@ -217,3 +278,10 @@ export interface DiscountCreate {
   isGlobal: boolean;
   discountCode?: string;
 }
+
+export type BadgeVariant =
+  | "default"
+  | "destructive"
+  | "outline"
+  | "secondary"
+  | "warning";
